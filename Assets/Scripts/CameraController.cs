@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour {
     public float rotationSpeed = 0.2f;
@@ -49,7 +50,7 @@ public class CameraController : MonoBehaviour {
     }
 
     void HandleMouse() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
             isDragging = true;
             lastTouchPos = Input.mousePosition;
         } else if (Input.GetMouseButtonUp(0)) {
@@ -93,7 +94,7 @@ public class CameraController : MonoBehaviour {
     }
 
     void HandleTouch() {
-        if (Input.touchCount == 1) {
+        if (Input.touchCount == 1 && !EventSystem.current.IsPointerOverGameObject(0)) {
             Touch touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Began) {
                 isDragging = true;
