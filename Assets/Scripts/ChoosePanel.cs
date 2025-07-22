@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -27,6 +28,16 @@ public class ChoosePanel : MonoBehaviour {
         "Bathroom",
         "Guestroom"
     };
+
+    private void Start() {
+        Show();
+    }
+
+    public void Show() {
+        _typeState.SetActive(true);
+        _sizeState.SetActive(false);  
+        _confirmState.SetActive(false);
+    }
 
     public void ConfirmType() {
         _selectedType = _typeToggles.FindIndex(t => t.isOn);

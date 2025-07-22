@@ -106,4 +106,8 @@ public class Room : MonoBehaviour {
         newPosition.y += heightDifference * 0.5f;
         wall.position = newPosition;
     }
+
+    public void PlaceItem() {
+        
+    }
 }
