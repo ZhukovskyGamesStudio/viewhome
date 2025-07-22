@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Room : MonoBehaviour {
@@ -6,10 +7,36 @@ public class Room : MonoBehaviour {
     public float shortWallHeight = 0.5f;
     public float fullWallHeight = 3f;
     
+    [SerializeField]
+    private Transform[] _firstWalls;
+
+    [SerializeField]
+    private Transform _floor;
+    
+    
     private Transform[] walls;
     private float[] targetHeights;
     private float[] currentHeights;
     private Camera mainCamera;
+
+    public static Room Instance { get; private set; }
+    
+    private void Awake() {
+        Instance = this;
+    }
+
+    public void CreateRoom(Vector2 size, int type) {
+        _firstWalls[0].localScale = new Vector3(size.x, 1, 1);
+        _firstWalls[1].localScale = new Vector3(size.y, 1, 1);
+        _firstWalls[2].localScale = new Vector3(size.x, 1, 1);
+        _firstWalls[3].localScale = new Vector3(size.y, 1, 1);
+
+        _firstWalls[0].localPosition = new Vector3(0, 0, size.y / 2);
+        _firstWalls[1].localPosition = new Vector3(size.x / 2, 0, 0);
+        _firstWalls[2].localPosition = new Vector3(0, 0, -size.y / 2);
+        _firstWalls[3].localPosition = new Vector3(-size.x / 2, 0, 0);
+        _floor.localScale = new Vector3(size.x + 1, 1, size.y + 1);
+    }
     
     void Start() {
         mainCamera = Camera.main;

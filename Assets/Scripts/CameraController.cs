@@ -45,7 +45,7 @@ public class CameraController : MonoBehaviour {
 #endif
         }
         UpdateCameraPosition();
-        Debug.Log($"IsDragging: {isDragging}, IsPanning: {isPanning}, Target: {target}, Distance: {distance}, XAngle: {xAngle}, YAngle: {yAngle}");
+      //  Debug.Log($"IsDragging: {isDragging}, IsPanning: {isPanning}, Target: {target}, Distance: {distance}, XAngle: {xAngle}, YAngle: {yAngle}");
     }
 
     void HandleMouse() {
