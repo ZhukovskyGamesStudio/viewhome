@@ -13,10 +13,10 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void SignUp() {
-        ApiBase.SignUp(UserDataManager.email);
+        AuthApi.SignUp(UserDataManager.email);
     }
 
     public void SignIn() {
-        ApiBase.SignIn(UserDataManager.email, UserDataManager.password);
+        AuthApi.SignIn(UserDataManager.email, UserDataManager.password);
     }
 }
