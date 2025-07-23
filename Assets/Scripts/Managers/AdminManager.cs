@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Dummiesman;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,7 +9,9 @@ public class AdminManager : MonoBehaviour {
 
     [SerializeField]
     private RawImage _rawImage;
-    
+
+    [SerializeField]
+    private Transform _modelContainer;
     private void Awake() {
         UserDataManager.CreateRandomValues();
     }
@@ -43,9 +46,13 @@ public class AdminManager : MonoBehaviour {
             _rawImage.texture = picture;
         }
         
-        var saveModelPath = await ApiBase.GetModel(ApiMocksIds.DownloadModelMock);
+        var saveModelPath = await ApiBase.GetModel(ApiMocksIds.DownloadModelObjMock);
         if (saveModelPath != null) {
-            
+            GameObject loadedObject = new OBJLoader().Load(saveModelPath);
+            loadedObject.transform.SetParent(_modelContainer);
+            loadedObject.transform.localPosition = Vector3.zero;
+            loadedObject.transform.localRotation = Quaternion.identity;
+            loadedObject.transform.localScale = Vector3.one;
         }
         
     }

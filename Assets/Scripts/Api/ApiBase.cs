@@ -32,7 +32,7 @@ public class ApiBase {
         } else {
             string filename = uri.Split('/')[^1];
             if (!filename.Contains('.')) {
-                filename = $"model{Random.Range(1000, 9999)}.fbx"; // Default filename if none is provided
+                filename = $"model{Random.Range(1000, 9999)}.obj"; // Default filename if none is provided
             }
 
             string savePath = string.Format($"{Application.persistentDataPath}/{filename}", Application.persistentDataPath, filename);
