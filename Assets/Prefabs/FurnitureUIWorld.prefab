@@ -632,6 +632,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca7061c6c186424bb837f5b71db3d06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftButton: {fileID: 0}
-  rightButton: {fileID: 0}
   rotateSpeed: 60
