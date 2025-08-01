@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Room : MonoBehaviour {
     [Header("Wall Settings")]
@@ -12,12 +14,18 @@ public class Room : MonoBehaviour {
 
     [SerializeField]
     private Transform _floor;
+
+    [SerializeField]
+    private Transform _furnitureContainer;
     
     
     private Transform[] walls;
     private float[] targetHeights;
     private float[] currentHeights;
     private Camera mainCamera;
+
+    [SerializeField]
+    private List<GameObject> _mockModels;
 
     public static Room Instance { get; private set; }
     
@@ -107,7 +115,10 @@ public class Room : MonoBehaviour {
         wall.position = newPosition;
     }
 
-    public void PlaceItem() {
-        
+    public void PlaceItem(Guid id) {
+        Random.InitState(id.GetHashCode());
+        var model = _mockModels[Random.Range(0, _mockModels.Count)];
+        var pos = new Vector3(0, model.transform.position.y, 0);
+        var furniture = Instantiate(model, pos, model.transform.rotation, _furnitureContainer);
     }
 }

@@ -16,11 +16,10 @@ public class ChoosePanel : MonoBehaviour {
 
     [SerializeField]
     private TextMeshProUGUI _typeText, _sizeText;
-    
-    
+
     private int _selectedType = 0;
     private Vector2 _selectedSize = Vector2.zero;
-    
+
     private List<string> _typeNames = new List<string> {
         "Living room",
         "Bedroom",
@@ -29,13 +28,10 @@ public class ChoosePanel : MonoBehaviour {
         "Guestroom"
     };
 
-    private void Start() {
-        Show();
-    }
-
     public void Show() {
+        gameObject.SetActive(true);
         _typeState.SetActive(true);
-        _sizeState.SetActive(false);  
+        _sizeState.SetActive(false);
         _confirmState.SetActive(false);
     }
 
@@ -62,7 +58,7 @@ public class ChoosePanel : MonoBehaviour {
         _confirmState.SetActive(false);
         _typeState.SetActive(true);
     }
-    
+
     public void ConfirmConfirm() {
         Room.Instance.CreateRoom(_selectedSize, _selectedType);
         gameObject.SetActive(false);

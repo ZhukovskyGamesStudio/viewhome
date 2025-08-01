@@ -11,12 +11,13 @@ public class MenuTab : MonoBehaviour {
 
     [SerializeField]
     private OfferView _offerViewPrefab;
-    
+
     [SerializeField]
     private Transform _categoriesGridContainer, _offersViewContainer;
 
     [SerializeField]
     private int _categoriesCount = 15;
+
     [SerializeField]
     private int _offersCount = 10;
 
@@ -25,6 +26,7 @@ public class MenuTab : MonoBehaviour {
 
     [SerializeField]
     private TextMeshProUGUI _categoryHeader, _infoHeader;
+
     [SerializeField]
     private List<string> _categoriesNames = new List<string> {
         "Living room",
@@ -49,6 +51,7 @@ public class MenuTab : MonoBehaviour {
         "Guest bathroom",
         "Utility room",
     };
+
     private void Start() {
         Init();
     }
@@ -59,7 +62,6 @@ public class MenuTab : MonoBehaviour {
         _categoriesState.SetActive(true);
         _offersState.SetActive(false);
         _infoState.SetActive(false);
-      
     }
 
     private void CreateCategories() {
@@ -74,7 +76,7 @@ public class MenuTab : MonoBehaviour {
         for (int i = 0; i < _offersCount; i++) {
             var offer = Instantiate(_offerViewPrefab, _offersViewContainer);
             int i1 = i;
-            offer.SetData(() => { SelectItem(i1); }, _categoriesNames[i1], Random.Range(1000,10000).ToString("C0"));
+            offer.SetData(() => { SelectItem(i1); }, _categoriesNames[i1], Random.Range(1000, 10000).ToString("C0"));
         }
     }
 
@@ -90,19 +92,20 @@ public class MenuTab : MonoBehaviour {
         _categoryHeader.text = _categoriesNames[category];
     }
 
-
     public void BackToCategories() {
         _offersState.SetActive(false);
         _categoriesState.SetActive(true);
     }
+
     public void BackToOffers() {
         _infoState.SetActive(false);
         _offersState.SetActive(true);
     }
 
     public void PlaceItem() {
-        Room.Instance.PlaceItem();
+        Room.Instance.PlaceItem(Guid.NewGuid());
         BackToOffers();
         BackToCategories();
+        TabsPanel.Instance.SelectTab(TabTypes.Room);
     }
 }
