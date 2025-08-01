@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class MenuTab : MonoBehaviour {
     [SerializeField]
@@ -26,6 +24,9 @@ public class MenuTab : MonoBehaviour {
 
     [SerializeField]
     private TextMeshProUGUI _categoryHeader, _infoHeader;
+
+    [SerializeField]
+    private ProductStateView _productStateView;
 
     [SerializeField]
     private List<string> _categoriesNames = new List<string> {
@@ -52,44 +53,45 @@ public class MenuTab : MonoBehaviour {
         "Utility room",
     };
 
-    private void Start() {
-        Init();
-    }
-
-    public void Init() {
-        CreateCategories();
-        CreateOffers();
+    public void Init(List<Category> categories) {
+        CreateCategories(categories);
         _categoriesState.SetActive(true);
         _offersState.SetActive(false);
         _infoState.SetActive(false);
+        _productStateView.Subscribe(PlaceItem);
     }
 
-    private void CreateCategories() {
-        for (int i = 0; i < _categoriesCount; i++) {
-            var button = Instantiate(_categoryButtonPrefab, _categoriesGridContainer);
-            int i1 = i;
-            button.SetData(_categoriesNames[i1], () => SelectCategory(i1));
+    private void CreateCategories(List<Category> categories) {
+        foreach (Category t in categories) {
+            CategoryButtonView button = Instantiate(_categoryButtonPrefab, _categoriesGridContainer);
+            button.SetData(t, SelectCategory);
         }
     }
 
-    private void CreateOffers() {
-        for (int i = 0; i < _offersCount; i++) {
+    private async void CreateOffers(Category category) {
+        foreach (Transform child in _offersViewContainer) {
+            Destroy(child.gameObject);
+        }
+
+        List<Product> products = await PanhomeApi.GetProducts(category);
+        foreach (Product t in products) {
             var offer = Instantiate(_offerViewPrefab, _offersViewContainer);
-            int i1 = i;
-            offer.SetData(() => { SelectItem(i1); }, _categoriesNames[i1], Random.Range(1000, 10000).ToString("C0"));
+            offer.SetData(t, SelectItem);
         }
     }
 
-    private void SelectItem(int itemIndex) {
+    private void SelectItem(Product product) {
         _offersState.SetActive(false);
         _infoState.SetActive(true);
-        _infoHeader.text = $"Item: {_categoriesNames[itemIndex]}";
+        _infoHeader.text = $"Item: {product.title}";
+        _productStateView.SetData(product);
     }
 
-    public void SelectCategory(int category) {
+    public void SelectCategory(Category category) {
         _offersState.SetActive(true);
         _categoriesState.SetActive(false);
-        _categoryHeader.text = _categoriesNames[category];
+        _categoryHeader.text = category.name;
+        CreateOffers(category);
     }
 
     public void BackToCategories() {
@@ -102,7 +104,7 @@ public class MenuTab : MonoBehaviour {
         _offersState.SetActive(true);
     }
 
-    public void PlaceItem() {
+    public void PlaceItem(Product product) {
         Room.Instance.PlaceItem(Guid.NewGuid());
         BackToOffers();
         BackToCategories();
