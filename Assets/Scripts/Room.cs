@@ -120,5 +120,6 @@ public class Room : MonoBehaviour {
         var model = _mockModels[Random.Range(0, _mockModels.Count)];
         var pos = new Vector3(0, model.transform.position.y, 0);
         var furniture = Instantiate(model, pos, model.transform.rotation, _furnitureContainer);
+        furniture.gameObject.SetActive(true);
     }
 }
