@@ -62,6 +62,7 @@ public class Products {
 
 [Serializable]
 public class Product {
+    public Guid productId = Guid.NewGuid();
     public string articleId;
     public string sourceId;
     public string modelId;
