@@ -148,6 +148,7 @@ public class MenuTab : MonoBehaviour {
 
     public void PlaceItem(Product product) {
         Room.Instance.PlaceItem(product);
+        UserDataManager.UserData.CartProducts.Add(product);
         BackToOffers();
         BackToCategories();
         TabsPanel.Instance.SelectTab(TabTypes.Room);

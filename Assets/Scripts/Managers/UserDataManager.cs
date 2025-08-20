@@ -1,6 +1,8 @@
 using UnityEngine;
 
 public static class UserDataManager {
+
+    public static UserData UserData = new UserData();
     public static string email;
     public static string password;
  

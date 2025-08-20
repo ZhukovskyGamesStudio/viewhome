@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PanhomeApi : ApiBase {
     public static async UniTask<List<Category>> GetCategories() {
@@ -26,6 +27,9 @@ public class PanhomeApi : ApiBase {
         if (request.responseCode == 200) {
             Debug.Log($"GetProducts data: {request.downloadHandler.text}");
             var data = JsonUtility.FromJson<ProductsData>(request.downloadHandler.text).data;
+            foreach (var product in data.items) {
+                product.InitRandomValues();
+            }
             return data.items;
         }
 
@@ -62,7 +66,9 @@ public class Products {
 
 [Serializable]
 public class Product {
-    public Guid productId = Guid.NewGuid();
+    public Guid productId;
+    public Vendor Vendor;
+    
     public string articleId;
     public string sourceId;
     public string modelId;
@@ -71,7 +77,23 @@ public class Product {
     public string price;
     public string currency;
     public List<string> images;
+
+    public void InitRandomValues() {
+        productId = Guid.NewGuid();
+        Random.InitState(productId.GetHashCode());
+        var values = Enum.GetNames(typeof(Vendor));
+        Vendor = Enum.Parse<Vendor>(values[Random.Range(0, values.Length-1)]);
+    }
     public string FixedImageLink(int i) => $"{images[i]}&{images[i + 1]}&{images[i + 2]}&{images[i + 3]}";
+}
+
+[Serializable]
+public enum Vendor {
+    Unknown = -1,
+    Wildberries = 0,
+    YandexMarket,
+    Ozon,
+    Avito
 }
 
 /*
