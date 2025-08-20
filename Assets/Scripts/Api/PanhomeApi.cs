@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -32,7 +33,9 @@ public class PanhomeApi : ApiBase {
                 product.InitRandomValues();
             }
 
-            return data.items;
+            var res = data.items.Where(p => !string.IsNullOrEmpty(p.modelId)).ToList();
+            Debug.Log($"GetProducts with models: {JsonUtility.ToJson(res)} ");
+            return res;
         }
 
         return null;

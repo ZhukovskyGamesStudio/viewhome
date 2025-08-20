@@ -443,6 +443,7 @@ Transform:
   - {fileID: 1162824023}
   - {fileID: 2046409746}
   - {fileID: 997722907}
+  - {fileID: 1188391084}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &86877703
@@ -1722,6 +1723,8 @@ MonoBehaviour:
   _choosePanel: {fileID: 1152672212}
   _tabsPanel: {fileID: 1215929}
   _menuTab: {fileID: 1733278241}
+  _cartTab: {fileID: 901114557}
+  _iconsManager: {fileID: 1188391085}
 --- !u!4 &199189342
 Transform:
   m_ObjectHideFlags: 0
@@ -12158,6 +12161,60 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1186446143}
   m_CullTransparentMesh: 1
+--- !u!1 &1188391083
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1188391084}
+  - component: {fileID: 1188391085}
+  m_Layer: 0
+  m_Name: IconsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1188391084
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188391083}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 86757332}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1188391085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188391083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0442ca55426067d458b61d5c2f70d9b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Icons:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 21300000, guid: 4981969cf1f91f248a46398027525ede, type: 3}
+    - Key: 1
+      Value: {fileID: 21300000, guid: 656d96f67f918864d9b74194051229ce, type: 3}
+    - Key: 2
+      Value: {fileID: 21300000, guid: 2ad5ccff77d78cf4dac7216368286821, type: 3}
+    - Key: 3
+      Value: {fileID: 21300000, guid: e70d48f97a17538439a6cd1996536d43, type: 3}
 --- !u!1 &1196677187
 GameObject:
   m_ObjectHideFlags: 0
@@ -14084,6 +14141,8 @@ MonoBehaviour:
   - {fileID: 1030032214}
   _floor: {fileID: 460609408}
   _furnitureContainer: {fileID: 527616184}
+  _assetLoaderOptions: {fileID: 11400000, guid: 2beb6b06b8752b84abab83b212dcab70, type: 2}
+  _furnitureFallbackMaterial: {fileID: 0}
   _mockModels:
   - {fileID: 314658428}
   - {fileID: 1642527460}

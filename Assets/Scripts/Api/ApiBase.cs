@@ -23,7 +23,7 @@ public class ApiBase {
         return null;
     }
 
-    public static async UniTask<string> GetModel(string uri) {
+    public static async UniTask<string> GetModelObject(string uri) {
         UnityWebRequest request = UnityWebRequest.Get(uri);
         await request.SendWebRequest();
 

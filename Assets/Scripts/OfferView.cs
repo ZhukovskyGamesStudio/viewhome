@@ -8,6 +8,9 @@ public class OfferView : MonoBehaviour {
     private TextMeshProUGUI _nameText, _descriptionText, _priceText;
 
     [SerializeField]
+    private Image _vendorIcon;
+    
+    [SerializeField]
     private RawImage _icon;
 
     private Action<Product> _openAction;
@@ -15,6 +18,7 @@ public class OfferView : MonoBehaviour {
 
     public async void SetData(Product product, Action<Product> onOpen) {
         _product = product;
+        _vendorIcon.sprite = IconsManager.Instance.Icons[product.Vendor];
         _nameText.text = product.title;
         _descriptionText.text = product.description;
         _priceText.text = $"{product.price} {product.currency}";

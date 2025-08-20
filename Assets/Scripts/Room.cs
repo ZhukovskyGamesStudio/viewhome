@@ -1,129 +1,191 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using TriLibCore;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Room : MonoBehaviour {
-    [Header("Wall Settings")]
-    public float wallAdjustSpeed = 3f;
+	[Header("Wall Settings")]
+	public float wallAdjustSpeed = 3f;
 
-    public float shortWallHeight = 0.5f;
-    public float fullWallHeight = 3f;
+	public float shortWallHeight = 0.5f;
+	public float fullWallHeight = 3f;
 
-    [SerializeField]
-    private Transform[] _firstWalls;
+	[SerializeField]
+	private Transform[] _firstWalls;
 
-    [SerializeField]
-    private Transform _floor;
+	[SerializeField]
+	private Transform _floor;
 
-    [SerializeField]
-    private Transform _furnitureContainer;
+	[SerializeField]
+	private Transform _furnitureContainer;
 
-    private Transform[] walls;
-    private float[] targetHeights;
-    private float[] currentHeights;
-    private Camera mainCamera;
+	[SerializeField]
+	private AssetLoaderOptions _assetLoaderOptions;
 
-    [SerializeField]
-    private List<GameObject> _mockModels;
+	[SerializeField]
+	private Material _furnitureFallbackMaterial;
 
-    public static Room Instance { get; private set; }
+	private Transform[] walls;
+	private float[] targetHeights;
+	private float[] currentHeights;
+	private Camera mainCamera;
 
-    private void Awake() {
-        Instance = this;
-    }
+	[SerializeField]
+	private List<GameObject> _mockModels;
 
-    public void CreateRoom(Vector2 size, int type) {
-        _firstWalls[0].localScale = new Vector3(size.x, 1, 1);
-        _firstWalls[1].localScale = new Vector3(size.y, 1, 1);
-        _firstWalls[2].localScale = new Vector3(size.x, 1, 1);
-        _firstWalls[3].localScale = new Vector3(size.y, 1, 1);
+	public static Room Instance { get; private set; }
 
-        _firstWalls[0].localPosition = new Vector3(0, 0, size.y / 2);
-        _firstWalls[1].localPosition = new Vector3(size.x / 2, 0, 0);
-        _firstWalls[2].localPosition = new Vector3(0, 0, -size.y / 2);
-        _firstWalls[3].localPosition = new Vector3(-size.x / 2, 0, 0);
-        _floor.localScale = new Vector3(size.x + 1, 1, size.y + 1);
-    }
+	private void Awake() {
+		Instance = this;
+	}
 
-    private void Start() {
-        mainCamera = Camera.main;
-        if (mainCamera == null) {
-            mainCamera = FindObjectOfType<Camera>();
-        }
+	public void CreateRoom(Vector2 size, int type) {
+		_firstWalls[0].localScale = new Vector3(size.x, 1, 1);
+		_firstWalls[1].localScale = new Vector3(size.y, 1, 1);
+		_firstWalls[2].localScale = new Vector3(size.x, 1, 1);
+		_firstWalls[3].localScale = new Vector3(size.y, 1, 1);
 
-        // Находим все стены (предполагаем, что они имеют тег "Wall" или содержат "wall" в имени)
-        Transform[] allChildren = GetComponentsInChildren<Transform>();
-        List<Transform> wallList = new();
+		_firstWalls[0].localPosition = new Vector3(0, 0, size.y / 2);
+		_firstWalls[1].localPosition = new Vector3(size.x / 2, 0, 0);
+		_firstWalls[2].localPosition = new Vector3(0, 0, -size.y / 2);
+		_firstWalls[3].localPosition = new Vector3(-size.x / 2, 0, 0);
+		_floor.localScale = new Vector3(size.x + 1, 1, size.y + 1);
+	}
 
-        foreach (Transform child in allChildren) {
-            if (child != transform && (child.name.ToLower().Contains("wall") || child.CompareTag("Wall"))) {
-                wallList.Add(child);
-            }
-        }
+	private void Start() {
+		mainCamera = Camera.main;
+		if (mainCamera == null) {
+			mainCamera = FindObjectOfType<Camera>();
+		}
 
-        walls = wallList.ToArray();
-        targetHeights = new float[walls.Length];
-        currentHeights = new float[walls.Length];
+		// Находим все стены (предполагаем, что они имеют тег "Wall" или содержат "wall" в имени)
+		Transform[] allChildren = GetComponentsInChildren<Transform>();
+		List<Transform> wallList = new();
 
-        // Инициализируем высоты
-        for (int i = 0; i < walls.Length; i++) {
-            currentHeights[i] = walls[i].localScale.y;
-            targetHeights[i] = currentHeights[i];
-        }
-    }
+		foreach (Transform child in allChildren) {
+			if (child != transform && (child.name.ToLower().Contains("wall") || child.CompareTag("Wall"))) {
+				wallList.Add(child);
+			}
+		}
 
-    private void Update() {
-        if (mainCamera == null || walls == null) {
-            return;
-        }
+		walls = wallList.ToArray();
+		targetHeights = new float[walls.Length];
+		currentHeights = new float[walls.Length];
 
-        for (int i = 0; i < walls.Length; i++) {
-            UpdateWallHeight(i);
-        }
-    }
+		// Инициализируем высоты
+		for (int i = 0; i < walls.Length; i++) {
+			currentHeights[i] = walls[i].localScale.y;
+			targetHeights[i] = currentHeights[i];
+		}
+	}
 
-    private void UpdateWallHeight(int wallIndex) {
-        Transform wall = walls[wallIndex];
-        if (wall == null) {
-            return;
-        }
+	private void Update() {
+		if (mainCamera == null || walls == null) {
+			return;
+		}
 
-        // Определяем, с какой стороны камера смотрит на стену
-        Vector3 wallPosition = wall.position;
-        Vector3 cameraPosition = mainCamera.transform.position;
-        Vector3 wallForward = wall.forward;
+		for (int i = 0; i < walls.Length; i++) {
+			UpdateWallHeight(i);
+		}
+	}
 
-        // Вектор от стены к камере
-        Vector3 toCamera = cameraPosition - wallPosition;
+	private void UpdateWallHeight(int wallIndex) {
+		Transform wall = walls[wallIndex];
+		if (wall == null) {
+			return;
+		}
 
-        // Определяем, с какой стороны камера (внутренняя или внешняя)
-        float dotProduct = Vector3.Dot(wallForward, toCamera);
-        bool isCameraInside = dotProduct > 0; // Камера с внутренней стороны стены
+		// Определяем, с какой стороны камера смотрит на стену
+		Vector3 wallPosition = wall.position;
+		Vector3 cameraPosition = mainCamera.transform.position;
+		Vector3 wallForward = wall.forward;
 
-        // Устанавливаем целевую высоту
-        targetHeights[wallIndex] = isCameraInside ? fullWallHeight : shortWallHeight;
+		// Вектор от стены к камере
+		Vector3 toCamera = cameraPosition - wallPosition;
 
-        // Плавно изменяем высоту через Lerp
-        currentHeights[wallIndex] = Mathf.Lerp(currentHeights[wallIndex], targetHeights[wallIndex], wallAdjustSpeed * Time.deltaTime);
+		// Определяем, с какой стороны камера (внутренняя или внешняя)
+		float dotProduct = Vector3.Dot(wallForward, toCamera);
+		bool isCameraInside = dotProduct > 0; // Камера с внутренней стороны стены
 
-        // Применяем новую высоту к стене, сохраняя основание на месте
-        Vector3 newScale = wall.localScale;
-        float heightDifference = currentHeights[wallIndex] - newScale.y;
-        newScale.y = currentHeights[wallIndex];
-        wall.localScale = newScale;
+		// Устанавливаем целевую высоту
+		targetHeights[wallIndex] = isCameraInside ? fullWallHeight : shortWallHeight;
 
-        // Сдвигаем позицию вверх на половину изменения высоты, чтобы основание осталось на месте
-        Vector3 newPosition = wall.position;
-        newPosition.y += heightDifference * 0.5f;
-        wall.position = newPosition;
-    }
+		// Плавно изменяем высоту через Lerp
+		currentHeights[wallIndex] = Mathf.Lerp(currentHeights[wallIndex], targetHeights[wallIndex], wallAdjustSpeed * Time.deltaTime);
 
-    public void PlaceItem(Product product) {
-        Random.InitState(product.productId.GetHashCode());
-        GameObject model = _mockModels[Random.Range(0, _mockModels.Count)];
-        Vector3 pos = new(0, model.transform.position.y, 0);
-        GameObject furniture = Instantiate(model, pos, model.transform.rotation, _furnitureContainer);
-        furniture.gameObject.SetActive(true);
-    }
+		// Применяем новую высоту к стене, сохраняя основание на месте
+		Vector3 newScale = wall.localScale;
+		float heightDifference = currentHeights[wallIndex] - newScale.y;
+		newScale.y = currentHeights[wallIndex];
+		wall.localScale = newScale;
+
+		// Сдвигаем позицию вверх на половину изменения высоты, чтобы основание осталось на месте
+		Vector3 newPosition = wall.position;
+		newPosition.y += heightDifference * 0.5f;
+		wall.position = newPosition;
+	}
+
+	public void PlaceItem(Product product) {
+		PlaceItemAsync(product).Forget();
+	}
+
+	private async UniTask PlaceItemAsync(Product product) {
+		Model modelData = await ModelControllerApi.GetModel(product.modelId);
+		if (modelData == null || string.IsNullOrEmpty(modelData.model)) {
+			Debug.LogError($"No model found {modelData}");
+			CreateRandomMockModel(product);
+			return;
+		}
+
+		string url = modelData.model;
+		bool isZip = url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
+		if (isZip) {
+			UnityEngine.Networking.UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(url);
+			var res = await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError,
+				_furnitureContainer.gameObject, _assetLoaderOptions, isZipFile: true, fileExtension: "fbx");
+			TryFixScaleAndMaterial(res);
+			return;
+		}
+
+		string localPath = await ApiBase.GetModelObject(url);
+		if (string.IsNullOrEmpty(localPath)) {
+			Debug.LogError($"No model found on path {localPath}");
+			CreateRandomMockModel(product);
+			return;
+		}
+
+		GameObject go = await AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError,
+			_furnitureContainer.gameObject, _assetLoaderOptions);
+		if (go != null) {
+			TryFixScaleAndMaterial(go);
+		}
+	}
+
+	private void TryFixScaleAndMaterial(GameObject res) {
+		res.transform.localScale = Vector3.one;
+		var resRenderers = res.GetComponent<Renderer>();
+		if (resRenderers.material == null) {
+			resRenderers.material = _furnitureFallbackMaterial;
+		}
+	}
+
+	private void CreateRandomMockModel(Product product) {
+		Random.InitState(product.productId.GetHashCode());
+		GameObject mock = _mockModels[Random.Range(0, _mockModels.Count)];
+		Vector3 pos = new(0, mock.transform.position.y, 0);
+		GameObject furniture = Instantiate(mock, pos, mock.transform.rotation, _furnitureContainer);
+		furniture.gameObject.SetActive(true);
+	}
+
+	private void OnError(IContextualizedError error) {
+		Debug.LogError(error.GetInnerException());
+	}
+
+	private void OnProgress(AssetLoaderContext context, float progress) { }
+
+	private void OnMaterialsLoad(AssetLoaderContext context) { }
+
+	private void OnLoad(AssetLoaderContext context) { }
 }

@@ -12,7 +12,14 @@ public class EntryPoint : MonoBehaviour {
     [SerializeField]
     private MenuTab _menuTab;
 
+    [SerializeField]
+    private CartTab _cartTab;
+
+    [SerializeField]
+    private IconsManager _iconsManager;
+
     private void Start() {
+        _iconsManager.Init();
         StartAsync().Forget();
     }
 

@@ -51,11 +51,14 @@ public class AdminManager : MonoBehaviour {
 
         if (string.IsNullOrEmpty(_modelFilePath)) {
             UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(ApiMocksIds.DownloadModelFbxBed2ZipMock);
-            AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions,
+            await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions,
                 isZipFile: true, fileExtension: "fbx");
         } else {
             _modelFilePath = _modelFilePath.Replace("\"", "");
-            AssetLoader.LoadModelFromFile(_modelFilePath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions);
+            GameObject go = await AssetLoader.LoadModelFromFile(_modelFilePath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions);
+            if (go != null) {
+                go.transform.localScale = Vector3.one;
+            }
         }
 
         Texture2D picture = await ApiBase.GetPicture(ApiMocksIds.DownloadPictureMock);
