@@ -29,7 +29,7 @@ public class MenuTab : MonoBehaviour {
     private ProductStateView _productStateView;
 
     [SerializeField]
-    private List<string> _categoriesNames = new List<string> {
+    private List<string> _categoriesNames = new() {
         "Living room",
         "Bedroom",
         "Kitchen",
@@ -50,7 +50,7 @@ public class MenuTab : MonoBehaviour {
         "Gym",
         "Nursery",
         "Guest bathroom",
-        "Utility room",
+        "Utility room"
     };
 
     private PanelType _panelType;
@@ -108,7 +108,7 @@ public class MenuTab : MonoBehaviour {
 
         List<Product> products = await PanhomeApi.GetProducts(category);
         foreach (Product t in products) {
-            var offer = Instantiate(_offerViewPrefab, _offersViewContainer);
+            OfferView offer = Instantiate(_offerViewPrefab, _offersViewContainer);
             offer.SetData(t, SelectItem);
         }
     }

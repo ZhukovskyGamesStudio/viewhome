@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FurnitureUI : MonoBehaviour {
     public float rotateSpeed = 60f;
-   
+
     private Transform target;
     private bool rotateLeft;
     private bool rotateRight;
@@ -11,15 +11,21 @@ public class FurnitureUI : MonoBehaviour {
         target = t;
     }
 
-    void Update() {
-        if (target == null) return;
-        if (rotateLeft)
+    private void Update() {
+        if (target == null) {
+            return;
+        }
+
+        if (rotateLeft) {
             target.Rotate(Vector3.up, -rotateSpeed * Time.deltaTime, Space.World);
-        if (rotateRight)
+        }
+
+        if (rotateRight) {
             target.Rotate(Vector3.up, rotateSpeed * Time.deltaTime, Space.World);
+        }
     }
 
-    void OnDisable() {
+    private void OnDisable() {
         rotateLeft = false;
         rotateRight = false;
     }

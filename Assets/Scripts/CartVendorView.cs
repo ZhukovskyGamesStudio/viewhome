@@ -12,12 +12,12 @@ public class CartVendorView : MonoBehaviour {
     [SerializeField]
     private CartProductView _productPrefab;
 
-    public List<CartProductView> Products { get; private set; } = new List<CartProductView>();
+    public List<CartProductView> Products { get; private set; } = new();
 
     public void SetData(Vendor vendor, List<Product> products) {
         _headerText.text = vendor.ToString();
-        foreach (var product in products) {
-            var productView = Instantiate(_productPrefab, _productsContainer);
+        foreach (Product product in products) {
+            CartProductView productView = Instantiate(_productPrefab, _productsContainer);
             Products.Add(productView);
             productView.SetData(product);
         }

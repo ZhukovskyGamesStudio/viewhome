@@ -1,3 +1,1 @@
-public class RoomControllerApi : ApiBase {
-    
-}
+public class RoomControllerApi : ApiBase { }

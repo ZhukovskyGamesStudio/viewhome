@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 public class PanhomeApi : ApiBase {
     public static async UniTask<List<Category>> GetCategories() {
-        using var request = Get($"panHome/categories?sourceName=Pan%20Home&limit=30&page=1");
+        using UnityWebRequest request = Get($"panHome/categories?sourceName=Pan%20Home&limit=30&page=1");
         await request.SendWebRequest();
 
         Debug.Log($"GetCategories: {request.responseCode}");
         if (request.responseCode == 200) {
             Debug.Log($"GetCategories data: {request.downloadHandler.text}");
-            var data = JsonUtility.FromJson<CategoriesData>(request.downloadHandler.text).data;
+            Categories data = JsonUtility.FromJson<CategoriesData>(request.downloadHandler.text).data;
             return data.items;
         }
 
@@ -20,16 +21,17 @@ public class PanhomeApi : ApiBase {
     }
 
     public static async UniTask<List<Product>> GetProducts(Category category) {
-        using var request = Get($"panHome/products?category={category.categoryId}&limit=25&page=1");
+        using UnityWebRequest request = Get($"panHome/products?category={category.categoryId}&limit=25&page=1");
         await request.SendWebRequest();
 
         Debug.Log($"GetProducts: {request.responseCode}");
         if (request.responseCode == 200) {
             Debug.Log($"GetProducts data: {request.downloadHandler.text}");
-            var data = JsonUtility.FromJson<ProductsData>(request.downloadHandler.text).data;
-            foreach (var product in data.items) {
+            Products data = JsonUtility.FromJson<ProductsData>(request.downloadHandler.text).data;
+            foreach (Product product in data.items) {
                 product.InitRandomValues();
             }
+
             return data.items;
         }
 
@@ -68,7 +70,7 @@ public class Products {
 public class Product {
     public Guid productId;
     public Vendor Vendor;
-    
+
     public string articleId;
     public string sourceId;
     public string modelId;
@@ -81,10 +83,13 @@ public class Product {
     public void InitRandomValues() {
         productId = Guid.NewGuid();
         Random.InitState(productId.GetHashCode());
-        var values = Enum.GetNames(typeof(Vendor));
-        Vendor = Enum.Parse<Vendor>(values[Random.Range(0, values.Length-1)]);
+        string[] values = Enum.GetNames(typeof(Vendor));
+        Vendor = Enum.Parse<Vendor>(values[Random.Range(0, values.Length - 1)]);
     }
-    public string FixedImageLink(int i) => $"{images[i]}&{images[i + 1]}&{images[i + 2]}&{images[i + 3]}";
+
+    public string FixedImageLink(int i) {
+        return $"{images[i]}&{images[i + 1]}&{images[i + 2]}&{images[i + 3]}";
+    }
 }
 
 [Serializable]

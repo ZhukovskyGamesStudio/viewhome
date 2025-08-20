@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,7 +8,7 @@ public class ChoosePanel : MonoBehaviour {
     private GameObject _typeState, _sizeState, _confirmState;
 
     [SerializeField]
-    private List<Toggle> _typeToggles = new List<Toggle>();
+    private List<Toggle> _typeToggles = new();
 
     [SerializeField]
     private TMP_InputField _lengthInput, _widthInput;
@@ -20,7 +19,7 @@ public class ChoosePanel : MonoBehaviour {
     private int _selectedType = 0;
     private Vector2 _selectedSize = Vector2.zero;
 
-    private List<string> _typeNames = new List<string> {
+    private List<string> _typeNames = new() {
         "Living room",
         "Bedroom",
         "Kitchen",

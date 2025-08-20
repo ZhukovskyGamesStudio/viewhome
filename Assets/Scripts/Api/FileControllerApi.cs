@@ -1,3 +1,1 @@
-public class FileControllerApi : ApiBase {
-    
-}
+public class FileControllerApi : ApiBase { }

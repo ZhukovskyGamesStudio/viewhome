@@ -8,7 +8,7 @@ public class ApiBase {
     protected static UnityWebRequest Get(string uri) {
         return UnityWebRequest.Get(_baseUrl + uri);
     }
-    
+
     public static async UniTask<Texture2D> GetPicture(string uri) {
         using UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(uri);
         await uwr.SendWebRequest();
@@ -22,9 +22,9 @@ public class ApiBase {
 
         return null;
     }
-    
+
     public static async UniTask<string> GetModel(string uri) {
-        var request = UnityWebRequest.Get(uri);
+        UnityWebRequest request = UnityWebRequest.Get(uri);
         await request.SendWebRequest();
 
         if (request.result != UnityWebRequest.Result.Success) {
@@ -36,7 +36,7 @@ public class ApiBase {
             }
 
             string savePath = string.Format($"{Application.persistentDataPath}/{filename}", Application.persistentDataPath, filename);
-           await System.IO.File.WriteAllBytesAsync(savePath, request.downloadHandler.data);
+            await System.IO.File.WriteAllBytesAsync(savePath, request.downloadHandler.data);
             Debug.Log($"File saved to: {savePath}");
             return savePath;
         }
@@ -45,7 +45,7 @@ public class ApiBase {
     }
 
     protected static UnityWebRequest Post(string uri, string json) {
-        return UnityWebRequest.Post(_baseUrl + uri, json, contentType: "application/json");
+        return UnityWebRequest.Post(_baseUrl + uri, json, "application/json");
     }
 
     protected static UnityWebRequest Put(string uri, string json) {

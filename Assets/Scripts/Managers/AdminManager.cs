@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Dummiesman;
 using TriLibCore;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -49,7 +50,7 @@ public class AdminManager : MonoBehaviour {
         Debug.Log($"GetModel: {model.title} {model.price} {model.pic} {model.model}");
 
         if (string.IsNullOrEmpty(_modelFilePath)) {
-            var webRequest = AssetDownloader.CreateWebRequest(ApiMocksIds.DownloadModelFbxBed2ZipMock);
+            UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(ApiMocksIds.DownloadModelFbxBed2ZipMock);
             AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions,
                 isZipFile: true, fileExtension: "fbx");
         } else {
@@ -57,7 +58,7 @@ public class AdminManager : MonoBehaviour {
             AssetLoader.LoadModelFromFile(_modelFilePath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions);
         }
 
-        var picture = await ApiBase.GetPicture(ApiMocksIds.DownloadPictureMock);
+        Texture2D picture = await ApiBase.GetPicture(ApiMocksIds.DownloadPictureMock);
         if (picture != null) {
             _rawImage.texture = picture;
         }

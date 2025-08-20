@@ -1,3 +1,1 @@
-public class FurnitureItemControllerApi: ApiBase {
-    
-}
+public class FurnitureItemControllerApi : ApiBase { }

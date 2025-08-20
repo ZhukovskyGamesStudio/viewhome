@@ -8,8 +8,8 @@ public class CameraController : MonoBehaviour {
     public float smoothSpeed = 5f;
     public float minDistance = 3f;
     public float maxDistance = 20f;
-    public Vector2 moveLimitX = new Vector2(-10f, 10f);
-    public Vector2 moveLimitZ = new Vector2(-10f, 10f);
+    public Vector2 moveLimitX = new(-10f, 10f);
+    public Vector2 moveLimitZ = new(-10f, 10f);
     private Vector3 target = Vector3.zero;
     private Vector3 currentTarget;
     private float distance;
@@ -22,12 +22,12 @@ public class CameraController : MonoBehaviour {
     private Vector2 panStartPos;
     private bool isPanning;
     private bool inputBlocked = false;
-    
+
     [SerializeField]
     private Transform _roomTransform;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start() {
+    private void Start() {
         Vector3 offset = transform.position - target;
         distance = offset.magnitude;
         distance = Mathf.Clamp(distance, minDistance, maxDistance);
@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    private void Update() {
         if (!inputBlocked) {
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
             HandleMouse();
@@ -45,11 +45,12 @@ public class CameraController : MonoBehaviour {
             HandleTouch();
 #endif
         }
+
         UpdateCameraPosition();
-      //  Debug.Log($"IsDragging: {isDragging}, IsPanning: {isPanning}, Target: {target}, Distance: {distance}, XAngle: {xAngle}, YAngle: {yAngle}");
+        //  Debug.Log($"IsDragging: {isDragging}, IsPanning: {isPanning}, Target: {target}, Distance: {distance}, XAngle: {xAngle}, YAngle: {yAngle}");
     }
 
-    void HandleMouse() {
+    private void HandleMouse() {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
             isDragging = true;
             lastTouchPos = Input.mousePosition;
@@ -80,20 +81,21 @@ public class CameraController : MonoBehaviour {
                 if (_roomTransform != null) {
                     _roomTransform.Rotate(Vector3.up, -delta.x * rotationSpeed, Space.World);
                 }
+
                 yAngle -= delta.y * rotationSpeed * 0.5f;
                 yAngle = Mathf.Clamp(yAngle, 5f, 80f);
                 lastTouchPos = Input.mousePosition;
             }
 
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (Mathf.Abs(scroll) > 0.01f) { 
+            if (Mathf.Abs(scroll) > 0.01f) {
                 distance -= scroll * zoomSpeed;
                 distance = Mathf.Clamp(distance, minDistance, maxDistance);
             }
         }
     }
 
-    void HandleTouch() {
+    private void HandleTouch() {
         if (Input.touchCount == 1 && !EventSystem.current.IsPointerOverGameObject(0)) {
             Touch touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Began) {
@@ -105,6 +107,7 @@ public class CameraController : MonoBehaviour {
                     if (_roomTransform != null) {
                         _roomTransform.Rotate(Vector3.up, -delta.x * rotationSpeed, Space.World);
                     }
+
                     yAngle -= delta.y * rotationSpeed * 0.5f;
                     yAngle = Mathf.Clamp(yAngle, 5f, 80f);
                     lastTouchPos = touch.position;
@@ -127,8 +130,9 @@ public class CameraController : MonoBehaviour {
                 panStartPos = avgPos;
                 panStartTarget = target;
             }
+
             // Зум pinch-жестом
-            float prevDist = ((t0.position - t0.deltaPosition) - (t1.position - t1.deltaPosition)).magnitude;
+            float prevDist = (t0.position - t0.deltaPosition - (t1.position - t1.deltaPosition)).magnitude;
             float currDist = (t0.position - t1.position).magnitude;
             float pinchDelta = currDist - prevDist;
             if (Mathf.Abs(pinchDelta) > 0.01f) {
@@ -140,18 +144,18 @@ public class CameraController : MonoBehaviour {
         }
     }
 
-    void UpdateCameraPosition() {
+    private void UpdateCameraPosition() {
         // Плавное движение к целевой позиции
         currentTarget = Vector3.Lerp(currentTarget, target, smoothSpeed * Time.deltaTime);
         currentDistance = Mathf.Lerp(currentDistance, distance, smoothSpeed * Time.deltaTime);
-        
+
         Quaternion rotation = Quaternion.Euler(yAngle, 0, 0);
         Vector3 dir = rotation * Vector3.forward;
         transform.position = currentTarget + -dir * currentDistance;
         transform.LookAt(currentTarget);
     }
 
-    void PanCamera(Vector2 delta) {
+    private void PanCamera(Vector2 delta) {
         float panSpeedMultiplier = panSpeed * distance;
         // Простое движение в мировых координатах X и Z
         Vector3 move = new Vector3(-delta.x, 0, -delta.y) * panSpeedMultiplier;
@@ -160,10 +164,10 @@ public class CameraController : MonoBehaviour {
         newTarget.z = Mathf.Clamp(newTarget.z, moveLimitZ.x, moveLimitZ.y);
         target = new Vector3(newTarget.x, 0, newTarget.z);
     }
-    
+
     public void SetInputBlocked(bool blocked) {
         inputBlocked = blocked;
-        
+
         // Сбрасываем состояния при блокировке
         if (blocked) {
             isDragging = false;

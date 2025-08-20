@@ -8,6 +8,7 @@ public class CategoryButtonView : MonoBehaviour {
 
     private Action<Category> _onClick;
     private Category _category;
+
     public void SetData(Category category, Action<Category> click) {
         _category = category;
         _labelText.text = category.name;
