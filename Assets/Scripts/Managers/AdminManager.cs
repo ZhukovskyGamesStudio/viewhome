@@ -19,6 +19,8 @@ public class AdminManager : MonoBehaviour {
 
     [SerializeField]
     private string _modelFilePath;
+    
+    public static bool IsShowOnlyWithModels = false;
 
     private void Awake() {
         UserDataManager.CreateRandomValues();
@@ -39,6 +41,11 @@ public class AdminManager : MonoBehaviour {
 
     public void GetModel() {
         GetModelAsync().Forget();
+    }
+
+
+    public void ToggleShowOnlyWithModels(bool isOn) {
+        IsShowOnlyWithModels = isOn;
     }
 
     private async UniTask GetModelAsync() {

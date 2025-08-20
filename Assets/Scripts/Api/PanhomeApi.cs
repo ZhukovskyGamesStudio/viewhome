@@ -33,9 +33,13 @@ public class PanhomeApi : ApiBase {
                 product.InitRandomValues();
             }
 
-            var res = data.items.Where(p => !string.IsNullOrEmpty(p.modelId)).ToList();
-            Debug.Log($"GetProducts with models: {JsonUtility.ToJson(res)} ");
-            return res;
+            if (AdminManager.IsShowOnlyWithModels) {
+                var res = data.items.Where(p => !string.IsNullOrEmpty(p.modelId)).ToList();
+                Debug.Log($"GetProducts with models: {JsonUtility.ToJson(res)} ");
+                return res;
+            }
+
+            return data.items;
         }
 
         return null;
