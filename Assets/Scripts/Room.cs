@@ -32,6 +32,9 @@ public class Room : MonoBehaviour {
 	private float[] currentHeights;
 	private Camera mainCamera;
 
+	
+	public Dictionary<Product, GameObject> ObjectsInRoom = new();
+	
 	[SerializeField]
 	private List<GameObject> _mockModels;
 
@@ -143,9 +146,10 @@ public class Room : MonoBehaviour {
 		bool isZip = url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
 		if (isZip) {
 			UnityEngine.Networking.UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(url);
-			var res = await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError,
+			var go = await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError,
 				_furnitureContainer.gameObject, _assetLoaderOptions, isZipFile: true, fileExtension: "fbx");
-			TryFixScaleAndMaterial(res);
+			TryFixScaleAndMaterial(go);
+			ObjectsInRoom.Add(product,go);
 			return;
 		}
 
@@ -156,10 +160,18 @@ public class Room : MonoBehaviour {
 			return;
 		}
 
-		GameObject go = await AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError,
+		GameObject go2 = await AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError,
 			_furnitureContainer.gameObject, _assetLoaderOptions);
-		if (go != null) {
-			TryFixScaleAndMaterial(go);
+		if (go2 != null) {
+			TryFixScaleAndMaterial(go2);
+			ObjectsInRoom.Add(product,go2);
+		}
+	}
+
+	public void RemoveItem(Product product) {
+		if (ObjectsInRoom.ContainsKey(product)) {
+			Destroy(ObjectsInRoom[product]);
+			ObjectsInRoom.Remove(product);
 		}
 	}
 

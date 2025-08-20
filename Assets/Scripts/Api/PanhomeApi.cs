@@ -99,6 +99,7 @@ public class Product {
     }
 }
 
+
 [Serializable]
 public enum Vendor {
     Unknown = -1,
