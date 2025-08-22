@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -88,11 +89,16 @@ public class Product {
     public List<string> images;
 
     public void InitRandomValues() {
+        
+        description = Regex.Replace(description, @"(.{80,100}?)\s", "$1\n");
+        
+        
         productId = (title + description).GetHashCode();
         Random.InitState(productId);
 
         string[] values = Enum.GetNames(typeof(Vendor));
         Vendor = Enum.Parse<Vendor>(values[Random.Range(0, values.Length - 1)]);
+        
     }
 
     public string FixedImageLink(int i) {

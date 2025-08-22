@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -5,13 +6,12 @@ public class CameraController : MonoBehaviour {
     [SerializeField]
     private Vector3 _startingRotation;
 
-    [SerializeField]
-    private float _idealSize = 20f;
-    
+    //[SerializeField]
+    // private float _idealSize = 20f;
+
     [SerializeField]
     private Room _room;
-    
-    
+
     public float rotationSpeed = 0.2f;
     public float zoomSpeed = 5f;
     public float panSpeed = 0.0004f;
@@ -32,21 +32,27 @@ public class CameraController : MonoBehaviour {
     private Vector2 panStartPos;
     private bool isPanning;
     private bool inputBlocked = false;
-    private float _multiplier;
+    private float _multiplier = 1f;
+
+    public static CameraController Instance;
 
     [SerializeField]
     private Transform _roomTransform;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start() {
-        _multiplier =  Mathf.Sqrt(Mathf.Max(_room.Size.x, _room.Size.y) / _idealSize);
+    private void Awake() {
+        Instance = this;
+    }
+
+    public void InitZoomMultiplier() {
+        // _multiplier = Mathf.Sqrt(Mathf.Max(_room.Size.x, _room.Size.y) / _idealSize);
         Vector3 offset = transform.position - target;
         distance = offset.magnitude * _multiplier;
-        distance = Mathf.Clamp(distance, minDistance  *_multiplier, maxDistance* _multiplier);
+        distance = Mathf.Clamp(distance, minDistance * _multiplier, maxDistance * _multiplier);
         currentDistance = distance;
         currentTarget = target;
         xAngle = Mathf.Atan2(offset.x, offset.z) * Mathf.Rad2Deg;
         _roomTransform.rotation = Quaternion.Euler(_startingRotation);
+        Debug.Log($"Multiplier {_multiplier}");
     }
 
     // Update is called once per frame
@@ -100,12 +106,24 @@ public class CameraController : MonoBehaviour {
                 lastTouchPos = Input.mousePosition;
             }
 
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            float scroll = ReadScrollY();
             if (Mathf.Abs(scroll) > 0.01f) {
                 distance -= scroll * zoomSpeed;
-                distance = Mathf.Clamp(distance, minDistance * _multiplier, maxDistance* _multiplier);
+                distance = Mathf.Clamp(distance, minDistance * _multiplier, maxDistance * _multiplier);
             }
         }
+    }
+    
+    static float ReadScrollY()
+    {
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+        if (Mouse.current == null) { return 0f; }
+        // В новом Input System обычно приходит ±120 за "шаг" — нормализуем к ~±1
+        return Mouse.current.scroll.ReadValue().y / 120f;
+#else
+        // Старый инпут: ось настроена по умолчанию
+        return Input.GetAxis("Mouse ScrollWheel");
+#endif
     }
 
     private void HandleTouch() {
@@ -150,7 +168,7 @@ public class CameraController : MonoBehaviour {
             float pinchDelta = currDist - prevDist;
             if (Mathf.Abs(pinchDelta) > 0.01f) {
                 distance -= pinchDelta * zoomSpeed * 0.01f;
-                distance = Mathf.Clamp(distance, minDistance  * _multiplier, maxDistance* _multiplier);
+                distance = Mathf.Clamp(distance, minDistance * _multiplier, maxDistance * _multiplier);
             }
         } else {
             isPanning = false;

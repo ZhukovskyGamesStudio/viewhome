@@ -14,6 +14,7 @@ public class TabsPanel : MonoBehaviour {
     private CanvasGroup _menuCanvasGroup;
 
     public static TabsPanel Instance;
+    public TabTypes SelectedTab = TabTypes.Room;
 
     private void Awake() {
         Instance = this;
@@ -21,6 +22,7 @@ public class TabsPanel : MonoBehaviour {
 
     public void SelectTab(TabTypes tab) {
         _tabsToggles[(int)tab].isOn = true;
+        SelectedTab = tab;
     }
 
     public void SetMenuToggle(bool isOn) {

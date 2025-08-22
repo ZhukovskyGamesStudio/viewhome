@@ -60,6 +60,7 @@ public class ChoosePanel : MonoBehaviour {
 
     public void ConfirmConfirm() {
         Room.Instance.CreateRoom(_selectedSize, _selectedType);
+        CameraController.Instance.InitZoomMultiplier();
         gameObject.SetActive(false);
     }
 }
