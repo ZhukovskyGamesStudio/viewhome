@@ -9,7 +9,7 @@ public class FtueManager : MonoBehaviour {
     private Transform _roomContainer;
 
     [SerializeField]
-    private GameObject _ftueShadow, _cartToggle, _tabsPanel;
+    private GameObject _ftueShadow, _cartToggle, _tabsPanel, _changeRoomButton;
     
 
     private FtueChair _ftueChair;
@@ -20,11 +20,13 @@ public class FtueManager : MonoBehaviour {
         _ftueShadow.SetActive(true);
      
         _cartToggle.SetActive(false);
+        _changeRoomButton.SetActive(false);
         _tabsPanel.SetActive(false);
     }
 
     private void OnChairClicked() {
         _cartToggle.SetActive(true);
+        _changeRoomButton.SetActive(true);
         _tabsPanel.SetActive(true);
         TabsPanel.Instance.SelectTab(TabTypes.Menu);
         Destroy(_ftueShadow);

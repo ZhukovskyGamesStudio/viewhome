@@ -75,7 +75,7 @@ public class Products {
 
 [Serializable]
 public class Product {
-    public Guid productId;
+    public int productId;
     public Vendor Vendor;
 
     public string articleId;
@@ -88,9 +88,9 @@ public class Product {
     public List<string> images;
 
     public void InitRandomValues() {
-      
-        Random.InitState((title + description).GetHashCode());
-        productId = Guid.NewGuid();
+        productId = (title + description).GetHashCode();
+        Random.InitState(productId);
+
         string[] values = Enum.GetNames(typeof(Vendor));
         Vendor = Enum.Parse<Vendor>(values[Random.Range(0, values.Length - 1)]);
     }
@@ -98,8 +98,19 @@ public class Product {
     public string FixedImageLink(int i) {
         return $"{images[i]}&{images[i + 1]}&{images[i + 2]}&{images[i + 3]}";
     }
-}
 
+    public override bool Equals(object obj) {
+        return Equals(obj as Product);
+    }
+
+    public bool Equals(Product other) {
+        return other != null && productId == other.productId;
+    }
+
+    public override int GetHashCode() {
+        return productId;
+    }
+}
 
 [Serializable]
 public enum Vendor {

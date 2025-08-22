@@ -145,10 +145,18 @@ public class Room : MonoBehaviour {
     }
 
     private async UniTask PlaceItemAsync(Product product) {
+        if (string.IsNullOrEmpty(product.modelId)) {
+            Debug.LogError($"ModelId is empty {product.title}");
+            var go0 = CreateRandomMockModel(product);
+            AddItem(product, go0, false);
+            return;
+        }
+
         Model modelData = await ModelControllerApi.GetModel(product.modelId);
         if (modelData == null || string.IsNullOrEmpty(modelData.model)) {
             Debug.LogError($"No model found {modelData}");
-            CreateRandomMockModel(product);
+            var go1 = CreateRandomMockModel(product);
+            AddItem(product, go1, false);
             return;
         }
 
@@ -165,7 +173,8 @@ public class Room : MonoBehaviour {
         string localPath = await ApiBase.GetModelObject(url);
         if (string.IsNullOrEmpty(localPath)) {
             Debug.LogError($"No model found on path {localPath}");
-            CreateRandomMockModel(product);
+            var go1 = CreateRandomMockModel(product);
+            AddItem(product, go1, false);
             return;
         }
 
@@ -176,8 +185,11 @@ public class Room : MonoBehaviour {
         }
     }
 
-    private void AddItem(Product product, GameObject go) {
-        TryFixScaleAndMaterial(go);
+    private void AddItem(Product product, GameObject go, bool isFixing = true) {
+        if (isFixing) {
+            TryFixScaleAndMaterial(go);
+        }
+
         ObjectsInRoom.Add(product, go);
         UpdateCost();
     }
@@ -189,12 +201,13 @@ public class Room : MonoBehaviour {
     }
 
     public void RemoveItem(Product product) {
-        if (!ObjectsInRoom.ContainsKey(product)) {
+        var item = ObjectsInRoom.Keys.FirstOrDefault(k => k.productId == product.productId);
+        if (item == null) {
             return;
         }
 
-        Destroy(ObjectsInRoom[product]);
-        ObjectsInRoom.Remove(product);
+        Destroy(ObjectsInRoom[item]);
+        ObjectsInRoom.Remove(item);
         UpdateCost();
     }
 
@@ -210,12 +223,13 @@ public class Room : MonoBehaviour {
         }
     }
 
-    private void CreateRandomMockModel(Product product) {
+    private GameObject CreateRandomMockModel(Product product) {
         Random.InitState(product.productId.GetHashCode());
         GameObject mock = _mockModels[Random.Range(0, _mockModels.Count)];
         Vector3 pos = new(0, mock.transform.position.y, 0);
         GameObject furniture = Instantiate(mock, pos, mock.transform.rotation, _furnitureContainer);
         furniture.gameObject.SetActive(true);
+        return furniture;
     }
 
     private void OnError(IContextualizedError error) {

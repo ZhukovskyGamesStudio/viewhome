@@ -17,8 +17,9 @@ public class TabsPanel : MonoBehaviour {
     }
 
     public void SelectTab(TabTypes tab) {
-        _menuTab.gameObject.SetActive(tab != TabTypes.Menu);
+       
         _tabsToggles[(int)tab].isOn = true;
+        _menuTab.gameObject.SetActive(tab != TabTypes.Menu);
     }
 }
 
