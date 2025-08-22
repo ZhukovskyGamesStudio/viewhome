@@ -88,8 +88,9 @@ public class Product {
     public List<string> images;
 
     public void InitRandomValues() {
+      
+        Random.InitState((title + description).GetHashCode());
         productId = Guid.NewGuid();
-        Random.InitState(productId.GetHashCode());
         string[] values = Enum.GetNames(typeof(Vendor));
         Vendor = Enum.Parse<Vendor>(values[Random.Range(0, values.Length - 1)]);
     }

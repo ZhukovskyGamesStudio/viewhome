@@ -2,6 +2,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour {
+    [SerializeField]
+    private Vector3 _startingRotation;
+
+    [SerializeField]
+    private float _idealSize = 20f;
+    
+    [SerializeField]
+    private Room _room;
+    
+    
     public float rotationSpeed = 0.2f;
     public float zoomSpeed = 5f;
     public float panSpeed = 0.0004f;
@@ -22,18 +32,21 @@ public class CameraController : MonoBehaviour {
     private Vector2 panStartPos;
     private bool isPanning;
     private bool inputBlocked = false;
+    private float _multiplier;
 
     [SerializeField]
     private Transform _roomTransform;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start() {
+        _multiplier =  Mathf.Sqrt(Mathf.Max(_room.Size.x, _room.Size.y) / _idealSize);
         Vector3 offset = transform.position - target;
-        distance = offset.magnitude;
-        distance = Mathf.Clamp(distance, minDistance, maxDistance);
+        distance = offset.magnitude * _multiplier;
+        distance = Mathf.Clamp(distance, minDistance  *_multiplier, maxDistance* _multiplier);
         currentDistance = distance;
         currentTarget = target;
         xAngle = Mathf.Atan2(offset.x, offset.z) * Mathf.Rad2Deg;
+        _roomTransform.rotation = Quaternion.Euler(_startingRotation);
     }
 
     // Update is called once per frame
@@ -90,7 +103,7 @@ public class CameraController : MonoBehaviour {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (Mathf.Abs(scroll) > 0.01f) {
                 distance -= scroll * zoomSpeed;
-                distance = Mathf.Clamp(distance, minDistance, maxDistance);
+                distance = Mathf.Clamp(distance, minDistance * _multiplier, maxDistance* _multiplier);
             }
         }
     }
@@ -137,7 +150,7 @@ public class CameraController : MonoBehaviour {
             float pinchDelta = currDist - prevDist;
             if (Mathf.Abs(pinchDelta) > 0.01f) {
                 distance -= pinchDelta * zoomSpeed * 0.01f;
-                distance = Mathf.Clamp(distance, minDistance, maxDistance);
+                distance = Mathf.Clamp(distance, minDistance  * _multiplier, maxDistance* _multiplier);
             }
         } else {
             isPanning = false;

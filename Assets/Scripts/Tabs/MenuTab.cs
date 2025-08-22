@@ -28,31 +28,6 @@ public class MenuTab : MonoBehaviour {
     [SerializeField]
     private ProductStateView _productStateView;
 
-    [SerializeField]
-    private List<string> _categoriesNames = new() {
-        "Living room",
-        "Bedroom",
-        "Kitchen",
-        "Bathroom",
-        "Guestroom",
-        "Office",
-        "Dining room",
-        "Hallway",
-        "Garage",
-        "Garden",
-        "Balcony",
-        "Laundry room",
-        "Storage room",
-        "Playroom",
-        "Workshop",
-        "Home theater",
-        "Library",
-        "Gym",
-        "Nursery",
-        "Guest bathroom",
-        "Utility room"
-    };
-
     private PanelType _panelType;
 
     public void Init(List<Category> categories) {
