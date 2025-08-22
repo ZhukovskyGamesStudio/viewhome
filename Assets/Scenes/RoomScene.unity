@@ -214,6 +214,7 @@ MonoBehaviour:
   - {fileID: 1132498301}
   - {fileID: 1316180201}
   _menuTab: {fileID: 651729311}
+  _menuCanvasGroup: {fileID: 651729314}
 --- !u!1001 &2184022
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6946,17 +6947,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 651729311}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1215929}
+        m_TargetAssemblyTypeName: TabsPanel, Assembly-CSharp
+        m_MethodName: SetMenuToggle
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
 --- !u!1 &617365494
@@ -7375,6 +7376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 651729312}
   - component: {fileID: 651729313}
+  - component: {fileID: 651729314}
   m_Layer: 5
   m_Name: MenuToggle
   m_TagString: Untagged
@@ -7462,19 +7464,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 651729311}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   m_IsOn: 0
+--- !u!225 &651729314
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651729311}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &652796851
 GameObject:
   m_ObjectHideFlags: 0
@@ -12111,17 +12113,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 651729311}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1215929}
+        m_TargetAssemblyTypeName: TabsPanel, Assembly-CSharp
+        m_MethodName: SetMenuToggle
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
 --- !u!1 &1145580105

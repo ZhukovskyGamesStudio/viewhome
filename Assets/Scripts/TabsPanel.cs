@@ -10,6 +10,9 @@ public class TabsPanel : MonoBehaviour {
     [SerializeField]
     private GameObject _menuTab;
 
+    [SerializeField]
+    private CanvasGroup _menuCanvasGroup;
+
     public static TabsPanel Instance;
 
     private void Awake() {
@@ -17,9 +20,25 @@ public class TabsPanel : MonoBehaviour {
     }
 
     public void SelectTab(TabTypes tab) {
-       
         _tabsToggles[(int)tab].isOn = true;
-        _menuTab.gameObject.SetActive(tab != TabTypes.Menu);
+    }
+
+    public void SetMenuToggle(bool isOn) {
+        _menuCanvasGroup.blocksRaycasts = isOn;
+        _menuCanvasGroup.alpha = isOn ? 1 : 0;
+    }
+
+
+public void SelectMenu() {
+        SelectTab(TabTypes.Menu);
+    }
+
+    public void SelectRoom() {
+        SelectTab(TabTypes.Room);
+    }
+
+    public void SelectCart() {
+        SelectTab(TabTypes.Cart);
     }
 }
 
