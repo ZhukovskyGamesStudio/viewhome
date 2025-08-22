@@ -7,6 +7,9 @@ public class TabsPanel : MonoBehaviour {
     [SerializeField]
     private List<Toggle> _tabsToggles;
 
+    [SerializeField]
+    private GameObject _menuTab;
+
     public static TabsPanel Instance;
 
     private void Awake() {
@@ -14,6 +17,7 @@ public class TabsPanel : MonoBehaviour {
     }
 
     public void SelectTab(TabTypes tab) {
+        _menuTab.gameObject.SetActive(tab != TabTypes.Menu);
         _tabsToggles[(int)tab].isOn = true;
     }
 }
