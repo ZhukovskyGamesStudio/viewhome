@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using TriLibCore;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -31,6 +34,9 @@ public class Room : MonoBehaviour {
     private float[] targetHeights;
     private float[] currentHeights;
     private Camera mainCamera;
+
+    [SerializeField]
+    private TextMeshProUGUI _totalCost;
 
     public Vector2 Size { get; private set; } = Vector2.one;
     public int Type { get; private set; }
@@ -152,8 +158,7 @@ public class Room : MonoBehaviour {
             UnityEngine.Networking.UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(url);
             var go = await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError,
                 _furnitureContainer.gameObject, _assetLoaderOptions, isZipFile: true, fileExtension: "fbx");
-            TryFixScaleAndMaterial(go);
-            ObjectsInRoom.Add(product, go);
+            AddItem(product, go);
             return;
         }
 
@@ -167,19 +172,37 @@ public class Room : MonoBehaviour {
         GameObject go2 = await AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError,
             _furnitureContainer.gameObject, _assetLoaderOptions);
         if (go2 != null) {
-            TryFixScaleAndMaterial(go2);
-            ObjectsInRoom.Add(product, go2);
+            AddItem(product, go2);
         }
+    }
+
+    private void AddItem(Product product, GameObject go) {
+        TryFixScaleAndMaterial(go);
+        ObjectsInRoom.Add(product, go);
+        UpdateCost();
+    }
+
+    private void UpdateCost() {
+        float res = ObjectsInRoom.Sum(o => float.Parse(o.Key.price, CultureInfo.InvariantCulture));
+        _totalCost.gameObject.SetActive(res >= 0);
+        _totalCost.text = "Total cost: " + res.ToString("F");
     }
 
     public void RemoveItem(Product product) {
-        if (ObjectsInRoom.ContainsKey(product)) {
-            Destroy(ObjectsInRoom[product]);
-            ObjectsInRoom.Remove(product);
+        if (!ObjectsInRoom.ContainsKey(product)) {
+            return;
         }
+
+        Destroy(ObjectsInRoom[product]);
+        ObjectsInRoom.Remove(product);
+        UpdateCost();
     }
 
     private void TryFixScaleAndMaterial(GameObject res) {
+        res.gameObject.layer = LayerMask.NameToLayer("Furniture");
+        var meshFilter = res.gameObject.GetComponent<MeshFilter>();
+        var meshCollider = res.gameObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = meshFilter.sharedMesh;
         res.transform.localScale = Vector3.one;
         var resRenderers = res.GetComponent<Renderer>();
         if (resRenderers.material == null) {
