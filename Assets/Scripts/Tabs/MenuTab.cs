@@ -87,7 +87,7 @@ public class MenuTab : MonoBehaviour {
         List<Product> products = await PanhomeApi.GetProducts(category);
         foreach (Product t in products) {
             OfferView offer = Instantiate(_offerViewPrefab, _offersViewContainer);
-            offer.SetData(t, SelectItem);
+            offer.SetData(t, SelectItem, PlaceItem);
         }
     }
 
