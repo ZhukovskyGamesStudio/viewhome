@@ -36,7 +36,13 @@ public class Room : MonoBehaviour {
     private Camera mainCamera;
 
     [SerializeField]
-    private TextMeshProUGUI _totalCost;
+    private RoomTab _roomTab;
+
+    [SerializeField]
+    private GameObject _itemsCount;
+
+    [SerializeField]
+    private TextMeshProUGUI _itemsCountText;
 
     public Vector2 Size { get; private set; } = Vector2.one;
     public int Type { get; private set; }
@@ -65,6 +71,7 @@ public class Room : MonoBehaviour {
         _firstWalls[2].localPosition = new Vector3(0, 0, -size.y / 2);
         _firstWalls[3].localPosition = new Vector3(-size.x / 2, 0, 0);
         _floor.localScale = new Vector3(size.x + 1, 1, size.y + 1);
+        _roomTab.UpdateParameters(type, size);
     }
 
     private void Start() {
@@ -92,6 +99,9 @@ public class Room : MonoBehaviour {
             currentHeights[i] = walls[i].localScale.y;
             targetHeights[i] = currentHeights[i];
         }
+
+        UpdateCost();
+        UpdateCount();
     }
 
     private void Update() {
@@ -191,13 +201,18 @@ public class Room : MonoBehaviour {
         }
 
         ObjectsInRoom.Add(product, go);
+        UpdateCount();
         UpdateCost();
     }
 
+    private void UpdateCount() {
+        _itemsCount.gameObject.SetActive(ObjectsInRoom.Count > 0);
+        _itemsCountText.text = $"{ObjectsInRoom.Count}";
+    }
+
     private void UpdateCost() {
-        float res = ObjectsInRoom.Sum(o => float.Parse(o.Key.price, CultureInfo.InvariantCulture));
-        _totalCost.gameObject.SetActive(res >= 0);
-        _totalCost.text = "Total cost: " + res.ToString("F");
+        float totalCost = ObjectsInRoom.Sum(o => float.Parse(o.Key.price, CultureInfo.InvariantCulture));
+        _roomTab.UpdateCost(totalCost);
     }
 
     public void RemoveItem(Product product) {
@@ -209,6 +224,7 @@ public class Room : MonoBehaviour {
         Destroy(ObjectsInRoom[item]);
         ObjectsInRoom.Remove(item);
         UpdateCost();
+        UpdateCount();
     }
 
     private void TryFixScaleAndMaterial(GameObject res) {
@@ -230,6 +246,10 @@ public class Room : MonoBehaviour {
         GameObject furniture = Instantiate(mock, pos, mock.transform.rotation, _furnitureContainer);
         furniture.gameObject.SetActive(true);
         return furniture;
+    }
+
+    public Product GetProductByObject(GameObject obj) {
+        return ObjectsInRoom.First(kvp => kvp.Value == obj).Key;
     }
 
     private void OnError(IContextualizedError error) {

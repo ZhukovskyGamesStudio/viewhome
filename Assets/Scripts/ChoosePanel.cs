@@ -19,7 +19,7 @@ public class ChoosePanel : MonoBehaviour {
     private int _selectedType = 0;
     private Vector2 _selectedSize = Vector2.zero;
 
-    private List<string> _typeNames = new() {
+    public static List<string> TypeNames = new() {
         "Living room",
         "Bedroom",
         "Kitchen",
@@ -49,7 +49,7 @@ public class ChoosePanel : MonoBehaviour {
 
     private void OpenConfirm() {
         _confirmState.SetActive(true);
-        _typeText.text = $"Room type: {_typeNames[_selectedType]}";
+        _typeText.text = $"Room type: {TypeNames[_selectedType]}";
         _sizeText.text = $"Room footage: {_selectedSize.x}*{_selectedSize.y}";
     }
 

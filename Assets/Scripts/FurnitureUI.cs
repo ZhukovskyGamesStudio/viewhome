@@ -6,9 +6,10 @@ public class FurnitureUI : MonoBehaviour {
     private Transform target;
     private bool rotateLeft;
     private bool rotateRight;
-
-    public void SetTarget(Transform t) {
-        target = t;
+    private Product _product;
+    public void SetTarget(Transform target, Product product) {
+        this.target = target;
+        _product = product;
     }
 
     private void Update() {
@@ -44,5 +45,10 @@ public class FurnitureUI : MonoBehaviour {
 
     public void OnRightUp() {
         rotateRight = false;
+    }
+
+    public void Delete() {
+        Room.Instance.RemoveItem(_product);
+        gameObject.SetActive(false);
     }
 }

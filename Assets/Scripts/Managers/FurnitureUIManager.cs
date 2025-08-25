@@ -41,7 +41,8 @@ public class FurnitureUIManager : MonoBehaviour {
         currentUI = Instantiate(uiPrefab, target.position + Vector3.up * uiYOffset, Quaternion.identity);
         FurnitureUI ui = currentUI.GetComponent<FurnitureUI>();
         if (ui != null) {
-            ui.SetTarget(target);
+            var product = Room.Instance.GetProductByObject(target.gameObject);
+            ui.SetTarget(target, product);
         }
     }
 
