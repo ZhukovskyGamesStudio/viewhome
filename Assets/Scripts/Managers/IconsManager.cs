@@ -3,7 +3,7 @@ using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 public class IconsManager : MonoBehaviour {
-    [SerializeField]
+    [SerializedDictionary]
     public SerializedDictionary<Vendor, Sprite> Icons;
 
     public static IconsManager Instance;

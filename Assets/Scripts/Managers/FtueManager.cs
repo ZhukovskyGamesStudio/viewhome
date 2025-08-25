@@ -9,12 +9,13 @@ public class FtueManager : MonoBehaviour {
     private Transform _roomContainer;
 
     [SerializeField]
-    private GameObject _ftueShadow, _cartToggle, _tabsPanel, _changeRoomButton;
+    private GameObject _avitoPanel,_ftueShadow, _cartToggle, _tabsPanel, _changeRoomButton;
     
 
     private FtueChair _ftueChair;
 
     private void Start() {
+        _avitoPanel.gameObject.SetActive(true);
         _ftueChair = Instantiate(_ftueChairPrefab, _roomContainer);
         _ftueChair.Init(OnChairClicked);
         _ftueShadow.SetActive(true);
