@@ -211,13 +211,16 @@ public class Room : MonoBehaviour {
     }
 
     private void UpdateCost() {
-        float totalCost = ObjectsInRoom.Sum(o => float.Parse(o.Key.price, CultureInfo.InvariantCulture));
+        float totalCost = GetTotalCost;
         _roomTab.UpdateCost(totalCost);
     }
+    
+    public float GetTotalCost =>ObjectsInRoom.Sum(o => float.Parse(o.Key.price, CultureInfo.InvariantCulture));
 
     public void RemoveItem(Product product) {
         var item = ObjectsInRoom.Keys.FirstOrDefault(k => k.productId == product.productId);
         if (item == null) {
+            Debug.LogError($"No item found with id {product.productId}");
             return;
         }
 

@@ -1452,7 +1452,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 10}
+  m_SizeDelta: {x: 0, y: 130}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8084799747997860020
 CanvasRenderer:
@@ -1671,4 +1671,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _vendorPrefab: {fileID: 8370432409405191273, guid: 92a886fcf3dcb1e40a05167d602ddc61, type: 3}
+  _costView: {fileID: 2673368045967542501, guid: e9c1d59ed37d5e54cbe9ffce1b418e2a, type: 3}
   _cartContainer: {fileID: 6988243580182874621}

@@ -19,9 +19,11 @@ public class CartVendorView : MonoBehaviour {
     private CartProductView _productPrefab;
 
     public Dictionary<Product, CartProductView> Products { get; private set; } = new();
+    private Action _onRemove;
 
-    public void SetData(Vendor vendor, List<Product> products) {
+    public void SetData(Vendor vendor, List<Product> products, Action onRemove) {
         _headerText.text = vendor.ToString();
+        _onRemove = onRemove;
         _vendorIcon.sprite = IconsManager.Instance.Icons[vendor];
 
         foreach (Product product in products) {
@@ -37,6 +39,7 @@ public class CartVendorView : MonoBehaviour {
         Destroy(Products[product].gameObject);
         Products.Remove(product);
         Room.Instance.RemoveItem(product);
+        _onRemove?.Invoke();
         if (Products.Count == 0) {
             Destroy(gameObject);
         }

@@ -8,6 +8,10 @@ public class CartTab : MonoBehaviour {
     private CartVendorView _vendorPrefab;
 
     [SerializeField]
+    private CartCostView _costView;
+    private CartCostView _costViewInstance;
+
+    [SerializeField]
     private Transform _cartContainer;
 
     private void OnEnable() {
@@ -25,9 +29,13 @@ public class CartTab : MonoBehaviour {
             List<Product> productsOfVendor = products.Where(v => v.Vendor == vendorType).ToList();
             if (productsOfVendor.Count > 0) {
                 CartVendorView vendorView = Instantiate(_vendorPrefab, _cartContainer);
-                vendorView.SetData(vendorType, productsOfVendor);
+                vendorView.SetData(vendorType, productsOfVendor,UpdateCost);
             }
         }
+        _costViewInstance = Instantiate(_costView, _cartContainer);
+        _costViewInstance.transform.SetAsLastSibling();
+        UpdateCost();
+
     }
 
     private void Update() {
@@ -40,6 +48,10 @@ public class CartTab : MonoBehaviour {
             SwitchBack();
         }
 #endif
+    }
+
+    private void UpdateCost() {
+        _costViewInstance.TotalCostText.text = "Total cost: " + Room.Instance.GetTotalCost.ToString("F");
     }
 
     private void SwitchBack() {
