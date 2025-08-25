@@ -18,8 +18,19 @@ public class EntryPoint : MonoBehaviour {
     [SerializeField]
     private IconsManager _iconsManager;
 
+    [SerializeField]
+    private FtueManager _ftueManager;
+
+    [SerializeField]
+    private Animation _loadingPanel;
+
+    [SerializeField]
+    private AnimationClip _loadingEnd;
+
     private void Start() {
+        _loadingPanel.gameObject.SetActive(true);
         _iconsManager.Init();
+        _ftueManager.Init();
         StartAsync().Forget();
     }
 
@@ -28,5 +39,7 @@ public class EntryPoint : MonoBehaviour {
         _choosePanel.Show();
         List<Category> categories = await PanhomeApi.GetCategories();
         _menuTab.Init(categories);
+        _ftueManager.StartFtue();
+        _loadingPanel.Play(_loadingEnd.name);
     }
 }

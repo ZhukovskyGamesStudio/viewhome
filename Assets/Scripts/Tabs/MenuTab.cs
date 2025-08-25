@@ -69,7 +69,10 @@ public class MenuTab : MonoBehaviour {
         }
     }
 
+    private List<Category> _categories;
+
     private void CreateCategories(List<Category> categories) {
+        _categories = categories;
         foreach (Category t in categories) {
             CategoryButtonView button = Instantiate(_categoryButtonPrefab, _categoriesGridContainer);
             button.SetData(t, SelectCategory);
@@ -85,6 +88,12 @@ public class MenuTab : MonoBehaviour {
         foreach (Product t in products) {
             OfferView offer = Instantiate(_offerViewPrefab, _offersViewContainer);
             offer.SetData(t, SelectItem);
+        }
+    }
+
+    public void SelectFirstCategory() {
+        if (_categories != null) {
+            SelectCategory(_categories[0]);
         }
     }
 
