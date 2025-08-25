@@ -38,7 +38,7 @@ public class CartVendorView : MonoBehaviour {
     private void RemoveItem(Product product) {
         Destroy(Products[product].gameObject);
         Products.Remove(product);
-        Room.Instance.RemoveItem(product);
+        MenuTab.Instance.RemoveItem(product);
         _onRemove?.Invoke();
         if (Products.Count == 0) {
             Destroy(gameObject);

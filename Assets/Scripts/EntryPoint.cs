@@ -28,6 +28,7 @@ public class EntryPoint : MonoBehaviour {
     private AnimationClip _loadingEnd;
 
     private void Start() {
+        MenuTab.Instance = _menuTab;
         _loadingPanel.gameObject.SetActive(true);
         _iconsManager.Init();
         _ftueManager.Init();

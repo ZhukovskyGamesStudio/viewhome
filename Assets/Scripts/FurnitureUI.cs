@@ -48,7 +48,7 @@ public class FurnitureUI : MonoBehaviour {
     }
 
     public void Delete() {
-        Room.Instance.RemoveItem(_product);
+        MenuTab.Instance.RemoveItem(_product);
         gameObject.SetActive(false);
     }
 }

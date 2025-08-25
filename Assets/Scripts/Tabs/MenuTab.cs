@@ -30,6 +30,8 @@ public class MenuTab : MonoBehaviour {
 
     private PanelType _panelType;
 
+    public static MenuTab Instance;
+
     public void Init(List<Category> categories) {
         CreateCategories(categories);
         _categoriesState.SetActive(true);
@@ -132,10 +134,12 @@ public class MenuTab : MonoBehaviour {
 
     public void PlaceItem(Product product) {
         Room.Instance.PlaceItem(product);
-        UserDataManager.UserData.CartProducts.Add(product);
         BackToOffers();
         BackToCategories();
         TabsPanel.Instance.SelectTab(TabTypes.Room);
+    }
+    public void RemoveItem(Product product) {
+        Room.Instance.RemoveItem(product);
     }
 }
 
