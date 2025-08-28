@@ -157,16 +157,16 @@ public class Room : MonoBehaviour {
     private async UniTask PlaceItemAsync(Product product) {
         if (string.IsNullOrEmpty(product.modelId)) {
             Debug.LogError($"ModelId is empty {product.title}");
-            var go0 = CreateRandomMockModel(product);
-            AddItem(product, go0, false);
+            var mock0 = CreateRandomMockModel(product);
+            AddItem(product, mock0, false);
             return;
         }
 
         Model modelData = await ModelControllerApi.GetModel(product.modelId);
         if (modelData == null || string.IsNullOrEmpty(modelData.model)) {
             Debug.LogError($"No model found {modelData}");
-            var go1 = CreateRandomMockModel(product);
-            AddItem(product, go1, false);
+            var mock1 = CreateRandomMockModel(product);
+            AddItem(product, mock1, false);
             return;
         }
 
@@ -174,24 +174,26 @@ public class Room : MonoBehaviour {
         bool isZip = url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
         if (isZip) {
             UnityEngine.Networking.UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(url);
-            var go = await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError,
+            var real0 = await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError,
                 _furnitureContainer.gameObject, _assetLoaderOptions, isZipFile: true, fileExtension: "fbx");
-            AddItem(product, go);
+            AddItem(product, real0);
+            FixDownloadedFromDima(real0);
             return;
         }
 
         string localPath = await ApiBase.GetModelObject(url);
         if (string.IsNullOrEmpty(localPath)) {
             Debug.LogError($"No model found on path {localPath}");
-            var go1 = CreateRandomMockModel(product);
-            AddItem(product, go1, false);
+            var mock2 = CreateRandomMockModel(product);
+            AddItem(product, mock2, false);
             return;
         }
 
-        GameObject go2 = await AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError,
+        GameObject real1 = await AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError,
             _furnitureContainer.gameObject, _assetLoaderOptions);
-        if (go2 != null) {
-            AddItem(product, go2);
+        if (real1 != null) {
+            AddItem(product, real1);
+            FixDownloadedFromDima(real1);
         }
     }
 
@@ -240,6 +242,41 @@ public class Room : MonoBehaviour {
         if (resRenderers.material == null) {
             resRenderers.material = _furnitureFallbackMaterial;
         }
+    }
+
+    private void FixDownloadedFromDima(GameObject downloaded) {
+        FixMeshPivotToBottomCenter(downloaded.GetComponent<MeshFilter>());
+        downloaded.transform.localScale = Vector3.one * 0.001f;
+    }
+    
+    void FixMeshPivotToBottomCenter(MeshFilter mf)
+    {
+        if (mf == null) {
+            Debug.Log("MeshFilter is null");
+            return;
+        }
+
+        Mesh mesh = mf.mesh; // runtime копия
+        if (mesh == null) {
+            
+            Debug.Log("Mesh is null");
+            return;
+        }
+
+        Vector3[] vertices = mesh.vertices;
+
+        Bounds bounds = mesh.bounds;
+        Vector3 offset = new Vector3(bounds.center.x, bounds.center.y, bounds.max.z);
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] -= offset;
+        }
+
+        mesh.vertices = vertices;
+        mesh.RecalculateBounds();
+        Debug.Log($"offset is {offset}");
+        //transform.position += transform.TransformVector(offset);
     }
 
     private GameObject CreateRandomMockModel(Product product) {

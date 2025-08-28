@@ -52,7 +52,7 @@ public class CameraController : MonoBehaviour {
         currentTarget = target;
         xAngle = Mathf.Atan2(offset.x, offset.z) * Mathf.Rad2Deg;
         _roomTransform.rotation = Quaternion.Euler(_startingRotation);
-        Debug.Log($"Multiplier {_multiplier}");
+        //Debug.Log($"Multiplier {_multiplier}");
     }
 
     // Update is called once per frame
