@@ -216,8 +216,8 @@ public class Room : MonoBehaviour {
         float totalCost = GetTotalCost;
         _roomTab.UpdateCost(totalCost);
     }
-    
-    public float GetTotalCost =>ObjectsInRoom.Sum(o => float.Parse(o.Key.price, CultureInfo.InvariantCulture));
+
+    public float GetTotalCost => ObjectsInRoom.Sum(o => float.Parse(o.Key.price, CultureInfo.InvariantCulture));
 
     public void RemoveItem(Product product) {
         var item = ObjectsInRoom.Keys.FirstOrDefault(k => k.productId == product.productId);
@@ -248,18 +248,14 @@ public class Room : MonoBehaviour {
         FixMeshPivotToBottomCenter(downloaded.GetComponent<MeshFilter>());
         downloaded.transform.localScale = Vector3.one * 0.001f;
     }
-    
-    void FixMeshPivotToBottomCenter(MeshFilter mf)
-    {
+
+    void FixMeshPivotToBottomCenter(MeshFilter mf) {
         if (mf == null) {
-            Debug.Log("MeshFilter is null");
             return;
         }
 
         Mesh mesh = mf.mesh; // runtime копия
         if (mesh == null) {
-            
-            Debug.Log("Mesh is null");
             return;
         }
 
@@ -268,15 +264,12 @@ public class Room : MonoBehaviour {
         Bounds bounds = mesh.bounds;
         Vector3 offset = new Vector3(bounds.center.x, bounds.center.y, bounds.max.z);
 
-        for (int i = 0; i < vertices.Length; i++)
-        {
+        for (int i = 0; i < vertices.Length; i++) {
             vertices[i] -= offset;
         }
 
         mesh.vertices = vertices;
         mesh.RecalculateBounds();
-        Debug.Log($"offset is {offset}");
-        //transform.position += transform.TransformVector(offset);
     }
 
     private GameObject CreateRandomMockModel(Product product) {
