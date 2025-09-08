@@ -54,6 +54,9 @@ public class Room : MonoBehaviour {
 
     public static Room Instance { get; private set; }
 
+    private bool _isWaiting = true;
+    private GameObject _goModel;
+
     private void Awake() {
         Instance = this;
     }
@@ -174,10 +177,17 @@ public class Room : MonoBehaviour {
         bool isZip = url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
         if (isZip) {
             UnityEngine.Networking.UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(url);
-            var real0 = await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError,
-                _furnitureContainer.gameObject, _assetLoaderOptions, isZipFile: true, fileExtension: "fbx");
-            AddItem(product, real0);
-            FixDownloadedFromDima(real0);
+            _isWaiting = true;
+            AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject,
+                _assetLoaderOptions, isZipFile: true, fileExtension: "fbx");
+            await UniTask.WaitWhile(() => _isWaiting);
+            if (_goModel != null) {
+                AddItem(product, _goModel);
+                FixDownloadedFromDima(_goModel);
+            } else {
+                Debug.LogError($"Model {url} could not be loaded");
+            }
+
             return;
         }
 
@@ -189,11 +199,13 @@ public class Room : MonoBehaviour {
             return;
         }
 
-        GameObject real1 = await AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError,
-            _furnitureContainer.gameObject, _assetLoaderOptions);
-        if (real1 != null) {
-            AddItem(product, real1);
-            FixDownloadedFromDima(real1);
+        _isWaiting = true;
+        AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject,
+            _assetLoaderOptions);
+        await UniTask.WaitWhile(() => _isWaiting);
+        if (_goModel != null) {
+            AddItem(product, _goModel);
+            FixDownloadedFromDima(_goModel);
         }
     }
 
@@ -287,11 +299,17 @@ public class Room : MonoBehaviour {
 
     private void OnError(IContextualizedError error) {
         Debug.LogError(error.GetInnerException());
+        _isWaiting = false;
     }
 
     private void OnProgress(AssetLoaderContext context, float progress) { }
 
-    private void OnMaterialsLoad(AssetLoaderContext context) { }
+    private void OnMaterialsLoad(AssetLoaderContext context) {
+        _isWaiting = false;
+    }
 
-    private void OnLoad(AssetLoaderContext context) { }
+    private void OnLoad(AssetLoaderContext context) {
+        _goModel = context.RootGameObject;
+        _isWaiting = false;
+    }
 }

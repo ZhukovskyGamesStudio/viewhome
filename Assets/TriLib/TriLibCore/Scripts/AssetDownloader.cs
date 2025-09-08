@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using Cysharp.Threading.Tasks;
 using TriLibCore.General;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -49,8 +48,7 @@ namespace TriLibCore
                     unityWebRequest = UnityWebRequest.Head($"{uri}?{data}");
                     break;
                 default:
-                    //unityWebRequest = UnityWebRequest.Get($"{uri}?{data}");
-                    unityWebRequest = UnityWebRequest.Get(uri);
+                    unityWebRequest = UnityWebRequest.Get($"{uri}?{data}");
                     break;
             }
             unityWebRequest.timeout = timeout;
@@ -69,44 +67,11 @@ namespace TriLibCore
         /// <param name="fileExtension">The extension of the URI Model or the Model inside the Zip file.</param>
         /// <param name="isZipFile">Pass <c>true</c> if your file is a Zip file.</param>
         /// <param name="haltTask">Turn on this field to avoid loading the model immediately and chain the Tasks.</param>
-        /// <returns>Returns the created Root GameObject wrapped in UniTask once materials are loaded.</returns>
-        public static UniTask<GameObject> LoadModelFromUri(UnityWebRequest unityWebRequest, Action<AssetLoaderContext> onLoad, Action<AssetLoaderContext> onMaterialsLoad, Action<AssetLoaderContext, float> onProgress, Action<IContextualizedError> onError = null, GameObject wrapperGameObject = null, AssetLoaderOptions assetLoaderOptions = null, object customContextData = null, string fileExtension = null, bool? isZipFile = null, bool haltTask = false)
+        /// <returns>The AssetLoaderContext used to load the model.</returns>
+        public static Coroutine LoadModelFromUri(UnityWebRequest unityWebRequest, Action<AssetLoaderContext> onLoad, Action<AssetLoaderContext> onMaterialsLoad, Action<AssetLoaderContext, float> onProgress, Action<IContextualizedError> onError = null, GameObject wrapperGameObject = null, AssetLoaderOptions assetLoaderOptions = null, object customContextData = null, string fileExtension = null, bool? isZipFile = null, bool haltTask = false)
         {
-            var tcs = new UniTaskCompletionSource<GameObject>();
-
-            Action<AssetLoaderContext> onLoadWrapper = ctx =>
-            {
-                onLoad?.Invoke(ctx);
-            };
-
-            Action<AssetLoaderContext> onMaterialsLoadWrapper = ctx =>
-            {
-                try
-                {
-                    onMaterialsLoad?.Invoke(ctx);
-                }
-                finally
-                {
-                    tcs.TrySetResult(ctx != null ? ctx.RootGameObject : null);
-                }
-            };
-
-            Action<IContextualizedError> onErrorWrapper = err =>
-            {
-                try
-                {
-                    onError?.Invoke(err);
-                }
-                finally
-                {
-                    var exception = err != null ? err.GetInnerException() : new Exception("Unknown error");
-                    tcs.TrySetException(exception);
-                }
-            };
-
             var assetDownloader = new GameObject("Asset Downloader").AddComponent<AssetDownloaderBehaviour>();
-            assetDownloader.StartCoroutine(assetDownloader.DownloadAsset(unityWebRequest, onLoadWrapper, onMaterialsLoadWrapper, onProgress, wrapperGameObject, onErrorWrapper, assetLoaderOptions, customContextData, fileExtension, isZipFile));
-            return tcs.Task;
+            return assetDownloader.StartCoroutine(assetDownloader.DownloadAsset(unityWebRequest, onLoad, onMaterialsLoad, onProgress, wrapperGameObject, onError, assetLoaderOptions, customContextData, fileExtension, isZipFile));
         }
     }
 }

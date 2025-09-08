@@ -1,9 +1,10 @@
-﻿
+﻿using UnityEditor.AssetImporters;
+using UnityEditor.Experimental.AssetImporters;
 
 namespace TriLibCore.Editor
 {
 #if !TRILIB_DISABLE_EDITOR_GLTF_IMPORT
-    [UnityEditor.AssetImporters.ScriptedImporter(2, new[] { "gltf", "glb"})]
+    [ScriptedImporter(2, new[] { "gltf", "glb"})]
 #endif
     public class TriLibGLTFScriptedImporter : TriLibScriptedImporter
     {

@@ -19,7 +19,7 @@ public class AdminManager : MonoBehaviour {
 
     [SerializeField]
     private string _modelFilePath;
-    
+
     public static bool IsShowOnlyWithModels = false;
 
     private void Awake() {
@@ -43,10 +43,12 @@ public class AdminManager : MonoBehaviour {
         GetModelAsync().Forget();
     }
 
-
     public void ToggleShowOnlyWithModels(bool isOn) {
         IsShowOnlyWithModels = isOn;
     }
+
+    private bool _isWaiting;
+    private GameObject _model;
 
     private async UniTask GetModelAsync() {
         Model model = await ModelControllerApi.GetModel(ApiMocksIds.ModelMockId);
@@ -58,13 +60,16 @@ public class AdminManager : MonoBehaviour {
 
         if (string.IsNullOrEmpty(_modelFilePath)) {
             UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(ApiMocksIds.DownloadModelFbxBed2ZipMock);
-            await AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions,
+
+            AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions,
                 isZipFile: true, fileExtension: "fbx");
+            await UniTask.WaitWhile(() => _isWaiting);
         } else {
             _modelFilePath = _modelFilePath.Replace("\"", "");
-            GameObject go = await AssetLoader.LoadModelFromFile(_modelFilePath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions);
-            if (go != null) {
-                go.transform.localScale = Vector3.one;
+            AssetLoader.LoadModelFromFile(_modelFilePath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _modelContainer, _assetLoaderOptions);
+            await UniTask.WaitWhile(() => _isWaiting);
+            if (_model != null) {
+                _model.transform.localScale = Vector3.one;
             }
         }
 
@@ -80,6 +85,7 @@ public class AdminManager : MonoBehaviour {
     /// <param name="obj">The contextualized error, containing the original exception and the context passed to the method where the error was thrown.</param>
     private void OnError(IContextualizedError obj) {
         Debug.LogError($"An error occurred while loading your Model: {obj.GetInnerException()}");
+        _isWaiting = false;
     }
 
     /// <summary>
@@ -98,6 +104,7 @@ public class AdminManager : MonoBehaviour {
     /// <param name="assetLoaderContext">The context used to load the Model.</param>
     private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext) {
         Debug.Log("Materials loaded. Model fully loaded.");
+        _isWaiting = false;
     }
 
     /// <summary>
@@ -107,5 +114,7 @@ public class AdminManager : MonoBehaviour {
     /// <param name="assetLoaderContext">The context used to load the Model.</param>
     private void OnLoad(AssetLoaderContext assetLoaderContext) {
         Debug.Log("Model loaded. Loading materials.");
+        _model = assetLoaderContext.RootGameObject;
+        _isWaiting = false;
     }
 }

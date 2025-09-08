@@ -43,9 +43,6 @@ namespace TriLibCore
             _unityWebRequest = unityWebRequest;
             _onProgress = onProgress;
             yield return unityWebRequest.SendWebRequest();
-            
-            Debug.Log(unityWebRequest.responseCode);
-            
             try
             {
                 if (unityWebRequest.responseCode < 400)

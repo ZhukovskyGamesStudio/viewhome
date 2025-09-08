@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using TriLibCore.Extensions;
 using TriLibCore.General;
 using TriLibCore.Interfaces;
@@ -63,17 +61,16 @@ namespace TriLibCore
         /// <param name="assetLoaderOptions">The options to use when loading the Model.</param>
         /// <param name="customContextData">The Custom Data that will be passed along the Context.</param>
         /// <param name="haltTask">Turn on this field to avoid loading the model immediately and chain the Tasks.</param>
-        /// <returns>Returns the created Root GameObject wrapped in UniTask once materials are loaded.</returns>
-        public static UniTask<GameObject> LoadModelFromFile(string path, Action<AssetLoaderContext> onLoad = null, Action<AssetLoaderContext> onMaterialsLoad = null, Action<AssetLoaderContext, float> onProgress = null, Action<IContextualizedError> onError = null, GameObject wrapperGameObject = null, AssetLoaderOptions assetLoaderOptions = null, object customContextData = null, bool haltTask = false)
+        /// <returns>The Asset Loader Context, containing Model loading information and the output Game Object.</returns>
+        public static AssetLoaderContext LoadModelFromFile(string path, Action<AssetLoaderContext> onLoad = null, Action<AssetLoaderContext> onMaterialsLoad = null, Action<AssetLoaderContext, float> onProgress = null, Action<IContextualizedError> onError = null, GameObject wrapperGameObject = null, AssetLoaderOptions assetLoaderOptions = null, object customContextData = null, bool haltTask = false)
         {
             MaterialMapper.LoadTextureCallback = TextureLoader.LoadTexture;
-            var tcs = new UniTaskCompletionSource<GameObject>();
 #if UNITY_WEBGL || UNITY_UWP || TRILIB_FORCE_SYNC
+            AssetLoaderContext assetLoaderContext = null;
             try
             {
-                var assetLoaderContext = LoadModelFromFileNoThread(path, onError, wrapperGameObject, assetLoaderOptions ?? CreateDefaultLoaderOptions(), customContextData);
+                assetLoaderContext = LoadModelFromFileNoThread(path, onError, wrapperGameObject, assetLoaderOptions ?? CreateDefaultLoaderOptions(), customContextData);
                 onLoad?.Invoke(assetLoaderContext);
-                tcs.TrySetResult(assetLoaderContext != null ? assetLoaderContext.RootGameObject : null);
                 onMaterialsLoad?.Invoke(assetLoaderContext);
             }
             catch (Exception exception)
@@ -81,59 +78,25 @@ namespace TriLibCore
                 if (exception is IContextualizedError contextualizedError)
                 {
                     HandleError(contextualizedError);
-                    tcs.TrySetException(contextualizedError.GetInnerException());
                 }
                 else
                 {
-                    var ctxErr = new ContextualizedError<AssetLoaderContext>(exception, null);
-                    HandleError(ctxErr);
-                    tcs.TrySetException(exception);
+                    HandleError(new ContextualizedError<AssetLoaderContext>(exception, null));
                 }
             }
-            return tcs.Task;
+            return assetLoaderContext;
 #else
-            Action<AssetLoaderContext> onLoadWrapper = ctx =>
-            {
-                onLoad?.Invoke(ctx);
-                var root = ctx != null ? ctx.RootGameObject : null;
-                tcs.TrySetResult(root);
-            };
-            Action<AssetLoaderContext> onMaterialsLoadWrapper = ctx =>
-            {
-                try
-                {
-                    onMaterialsLoad?.Invoke(ctx);
-                }
-                finally
-                {
-                    var root = ctx != null ? ctx.RootGameObject : null;
-                    tcs.TrySetResult(root);
-                }
-            };
-            Action<IContextualizedError> onErrorWrapper = err =>
-            {
-                try
-                {
-                    onError?.Invoke(err);
-                }
-                finally
-                {
-                    var exception = err != null ? err.GetInnerException() : new Exception("Unknown error");
-                    tcs.TrySetException(exception);
-                }
-            };
-
             var assetLoaderContext = new AssetLoaderContext
             {
                 Options = assetLoaderOptions ?? CreateDefaultLoaderOptions(),
                 Filename = path,
                 BasePath = FileUtils.GetFileDirectory(path),
                 WrapperGameObject = wrapperGameObject,
-                OnMaterialsLoad = onMaterialsLoadWrapper,
-                OnLoad = onLoadWrapper,
+                OnMaterialsLoad = onMaterialsLoad,
+                OnLoad = onLoad,
                 OnProgress = onProgress,
                 HandleError = HandleError,
-                OnError = onErrorWrapper,
+                OnError = onError,
                 CustomData = customContextData,
             };
             if (assetLoaderContext.Options.ForceGCCollectionWhileLoading)
@@ -148,7 +111,7 @@ namespace TriLibCore
             var task = ThreadUtils.RunThread(assetLoaderContext, ref assetLoaderContext.CancellationToken, LoadModel, ProcessRootModel, HandleError, assetLoaderContext.Options.Timeout, threadName, !haltTask);
             assetLoaderContext.Tasks.Add(task);
             assetLoaderContext.Task = task;
-            return tcs.Task;
+            return assetLoaderContext;
 #endif
         }
 
