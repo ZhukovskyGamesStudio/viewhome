@@ -1120,6 +1120,7 @@ MonoBehaviour:
   _ftueManager: {fileID: 2098388185}
   _loadingPanel: {fileID: 2023930642}
   _loadingEnd: {fileID: 7400000, guid: b5f52d444b0cc1049aec449b4eead43a, type: 2}
+  _modelScalesConfig: {fileID: 11400000, guid: e00faa50282ae1e48951285b45b03ebf, type: 2}
 --- !u!4 &199189342
 Transform:
   m_ObjectHideFlags: 0
@@ -10286,7 +10287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallAdjustSpeed: 8
   shortWallHeight: 0.5
-  fullWallHeight: 3.5
+  fullWallHeight: 2.5
   _firstWalls:
   - {fileID: 33901034}
   - {fileID: 2014512385}

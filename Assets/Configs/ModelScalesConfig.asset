@@ -13,4 +13,44 @@ MonoBehaviour:
   m_Name: ModelScalesConfig
   m_EditorClassIdentifier: Assembly-CSharp::ModelScalesConfig
   UrlScaleDict:
-    _serializedList: []
+    _serializedList:
+    - Key: https://s3.viewhome.simul.me/models/a5e71ae46d3155fa53962e429802f8004e4351f5220395bfe7de3d1ff6d3940c.fbx
+      Value: {x: 1, y: 1, z: 1}
+    - Key: https://s3.viewhome.simul.me/models/c72f44363bafe96c3a5e4fa918c0aecc6966e83f09545b1f5181bcc5fceb357a.fbx
+      Value: {x: 1, y: 1, z: 1}
+    - Key: https://s3.viewhome.simul.me/models/bc4b0200caf0a10992468b345f8ff11f9ca1f58eaf59b3e600af39e7f13a5e19.fbx
+      Value: {x: 1, y: 1, z: 1}
+    - Key: https://s3.viewhome.simul.me/models/c2e5f60fbb59a5f9597150f4faca9d49d50fb5736fdace299717b7395b1d210a.fbx
+      Value: {x: 2, y: 2, z: 2}
+    - Key: https://s3.viewhome.simul.me/models/d400e715515226971b5b0132ff65d0283d3beb9adb9225cb69ae96c0021d00bc.fbx
+      Value: {x: 2, y: 2, z: 2}
+    - Key: https://s3.viewhome.simul.me/models/0a1aa66f6da054517dcd6e53f8f89a239eac7e8629351295f624ee91b4e038d8.fbx
+      Value: {x: 2.5, y: 2.5, z: 2.5}
+    - Key: https://s3.viewhome.simul.me/models/4f00cbc89d3f59f4cba5fbe928b3c55bc79e78578079e865096a581af9b966f8.fbx
+      Value: {x: 2.5, y: 2.5, z: 2.5}
+    - Key: https://s3.viewhome.simul.me/models/d06978beec08ea056f260494bdbd97c6d2806f2c9037ab36f1c92f00660fe327.fbx
+      Value: {x: 2.5, y: 2.5, z: 2.5}
+    - Key: https://s3.viewhome.simul.me/models/b6f3cadf1571c79966ff315e1122778f1f31ab92c7801c3eaa5c72247378087e.fbx
+      Value: {x: 3.5, y: 3.5, z: 3.5}
+    - Key: https://s3.viewhome.simul.me/models/53bf1383c45f76eb510972a041204d4aa09fdc70c77c6389f298dedcba772ce8.fbx
+      Value: {x: 3.5, y: 3.5, z: 3.5}
+    - Key: https://s3.viewhome.simul.me/models/d4fe435386dd156c74cb4ed048efbc41abe26a20ab122f076aad04ab998b05ad.fbx
+      Value: {x: 3.5, y: 3.5, z: 3.5}
+    - Key: https://s3.viewhome.simul.me/models/e0a0f0fe29bf06b6afef49b7ca14d47a0a852a2f8b8c8bae27072600b9d26428.fbx
+      Value: {x: 3.5, y: 3.5, z: 3.5}
+  AllowedCategories:
+  - accessories
+  - vases & bowls
+  - decor accents
+  - lighting
+  - furniture
+  - beds
+  - king beds
+  - dining room
+  - dining tables
+  - 6 seater
+  - 8 seater dining
+  - 8 seater
+  - dining chairs
+  - living room
+  - storage
