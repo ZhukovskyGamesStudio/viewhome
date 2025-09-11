@@ -10335,6 +10335,7 @@ MonoBehaviour:
   - {fileID: 733689090}
   - {fileID: 621357296}
   - {fileID: 1437889523}
+  _modelScalesConfig: {fileID: 11400000, guid: e00faa50282ae1e48951285b45b03ebf, type: 2}
 --- !u!1 &1374670196
 GameObject:
   m_ObjectHideFlags: 0

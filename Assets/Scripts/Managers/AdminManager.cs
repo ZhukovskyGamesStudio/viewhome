@@ -20,7 +20,7 @@ public class AdminManager : MonoBehaviour {
     [SerializeField]
     private string _modelFilePath;
 
-    public static bool IsShowOnlyWithModels = false;
+    public static bool IsShowOnlyWithModels = true;
 
     private void Awake() {
         UserDataManager.CreateRandomValues();

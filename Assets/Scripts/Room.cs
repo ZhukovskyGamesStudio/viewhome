@@ -5,6 +5,10 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using TriLibCore;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -49,6 +53,9 @@ public class Room : MonoBehaviour {
     [SerializeField]
     private List<GameObject> _mockModels;
 
+    [SerializeField]
+    private ModelScalesConfig _modelScalesConfig;
+
     public static Room Instance { get; private set; }
 
     private bool _isWaiting = true;
@@ -61,15 +68,15 @@ public class Room : MonoBehaviour {
     public void CreateRoom(Vector2 size, int type) {
         Size = size;
         Type = type;
-        _firstWalls[0].localScale = new Vector3(size.x, 1, 1);
-        _firstWalls[1].localScale = new Vector3(size.y, 1, 1);
-        _firstWalls[2].localScale = new Vector3(size.x, 1, 1);
-        _firstWalls[3].localScale = new Vector3(size.y, 1, 1);
+        _firstWalls[0].localScale = new Vector3(size.x+1.5f, 1, 1);
+        _firstWalls[1].localScale = new Vector3(size.y+1.5f, 1, 1);
+        _firstWalls[2].localScale = new Vector3(size.x+1.5f, 1, 1);
+        _firstWalls[3].localScale = new Vector3(size.y+1.5f, 1, 1);
 
-        _firstWalls[0].localPosition = new Vector3(0, 0, size.y / 2);
-        _firstWalls[1].localPosition = new Vector3(size.x / 2, 0, 0);
-        _firstWalls[2].localPosition = new Vector3(0, 0, -size.y / 2);
-        _firstWalls[3].localPosition = new Vector3(-size.x / 2, 0, 0);
+        _firstWalls[0].localPosition = new Vector3(0, 0, size.y / 2+0.5f);
+        _firstWalls[1].localPosition = new Vector3(size.x / 2+0.5f, 0, 0);
+        _firstWalls[2].localPosition = new Vector3(0, 0, -size.y / 2-0.5f);
+        _firstWalls[3].localPosition = new Vector3(-size.x / 2-0.5f, 0, 0);
         _floor.localScale = new Vector3(size.x + 1, 1, size.y + 1);
         _roomTab.UpdateParameters(type, size);
     }
@@ -173,13 +180,20 @@ public class Room : MonoBehaviour {
         string url = modelData.model;
         bool isFbx = url.EndsWith(".fbx", StringComparison.OrdinalIgnoreCase);
         if (isFbx) {
+#if UNITY_EDITOR
+            if (!_modelScalesConfig.UrlScaleDict.ContainsKey(url)) {
+                Debug.Log(url);
+            }
+#endif
+
             UnityEngine.Networking.UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(url);
             _isWaiting = true;
-            AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject, fileExtension: "fbx");
+            AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject,
+                fileExtension: "fbx");
             await UniTask.WaitWhile(() => _isWaiting);
             if (_goModel != null) {
                 AddItem(product, _goModel);
-                FixDownloadedFromDima(_goModel);
+                FixDownloadedFromDima(_goModel, url);
             } else {
                 Debug.LogError($"Model {url} could not be loaded");
             }
@@ -200,7 +214,7 @@ public class Room : MonoBehaviour {
         await UniTask.WaitWhile(() => _isWaiting);
         if (_goModel != null) {
             AddItem(product, _goModel);
-            FixDownloadedFromDima(_goModel);
+            FixDownloadedFromDima(_goModel, url);
         }
     }
 
@@ -251,9 +265,15 @@ public class Room : MonoBehaviour {
         }
     }
 
-    private void FixDownloadedFromDima(GameObject downloaded) {
+    private void FixDownloadedFromDima(GameObject downloaded, string url) {
         FixMeshPivotToBottomCenter(downloaded.GetComponent<MeshFilter>());
         downloaded.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", null);
+        if (!_modelScalesConfig.UrlScaleDict.TryGetValue(url, out Vector3 scale)) {
+            Debug.Log(url);
+        } else {
+            downloaded.transform.localScale = scale;
+        }
+        downloaded.SetActive(true);
         //downloaded.transform.localScale = Vector3.one * 0.001f;
     }
 
@@ -306,5 +326,6 @@ public class Room : MonoBehaviour {
 
     private void OnLoad(AssetLoaderContext context) {
         _goModel = context.RootGameObject;
+        _goModel.gameObject.SetActive(false);
     }
 }
