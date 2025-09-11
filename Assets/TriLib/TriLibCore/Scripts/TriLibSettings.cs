@@ -17,10 +17,10 @@ namespace TriLibCore
         private Dictionary<string, bool> _boolPreferences;
         [SerializeField]
         [HideInInspector]
-        private List<string> _boolKeys = new List<string>();
+        private List<string> _boolKeys;
         [SerializeField]
         [HideInInspector]
-        private List<bool> _boolValues =  new List<bool>();
+        private List<bool> _boolValues;
 
         private static TriLibSettings GetTriLibPreferences()
         {

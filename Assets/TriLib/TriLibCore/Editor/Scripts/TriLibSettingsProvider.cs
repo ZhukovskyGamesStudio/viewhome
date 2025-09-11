@@ -31,8 +31,9 @@ namespace TriLibCore.Editor
             {
                 throw new Exception("Could not find TriLibReaders.cs file. Please re-import TriLib package.");
             }
+            
             _importerOptions = new List<ImporterOption>();
-            var pluginImporters = PluginImporter.GetAllImporters();
+           /* var pluginImporters = PluginImporter.GetAllImporters();
             foreach (var pluginImporter in pluginImporters)
             {
                 if (!pluginImporter.isNativePlugin && pluginImporter.assetPath.Contains("TriLibCore."))
@@ -47,6 +48,22 @@ namespace TriLibCore.Editor
                     }
                 }
             }
+            
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                // ищем только TriLibCore сборки
+                if (assembly.FullName.StartsWith("TriLibCore"))
+                {
+                    foreach (var type in assembly.GetExportedTypes())
+                    {
+                        if (type.BaseType == typeof(ReaderBase))
+                        {
+                            _importerOptions.Add(new ImporterOption(type.Name, type.Namespace, null));
+                        }
+                    }
+                }
+            }*/
         }
 
         public override void OnGUI(string searchContext)

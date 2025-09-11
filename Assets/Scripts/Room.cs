@@ -25,9 +25,6 @@ public class Room : MonoBehaviour {
     private Transform _furnitureContainer;
 
     [SerializeField]
-    private AssetLoaderOptions _assetLoaderOptions;
-
-    [SerializeField]
     private Material _furnitureFallbackMaterial;
 
     private Transform[] walls;
@@ -174,12 +171,11 @@ public class Room : MonoBehaviour {
         }
 
         string url = modelData.model;
-        bool isZip = url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
-        if (isZip) {
+        bool isFbx = url.EndsWith(".fbx", StringComparison.OrdinalIgnoreCase);
+        if (isFbx) {
             UnityEngine.Networking.UnityWebRequest webRequest = AssetDownloader.CreateWebRequest(url);
             _isWaiting = true;
-            AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject,
-                _assetLoaderOptions, isZipFile: true, fileExtension: "fbx");
+            AssetDownloader.LoadModelFromUri(webRequest, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject, fileExtension: "fbx");
             await UniTask.WaitWhile(() => _isWaiting);
             if (_goModel != null) {
                 AddItem(product, _goModel);
@@ -200,8 +196,7 @@ public class Room : MonoBehaviour {
         }
 
         _isWaiting = true;
-        AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject,
-            _assetLoaderOptions);
+        AssetLoader.LoadModelFromFile(localPath, OnLoad, OnMaterialsLoad, OnProgress, OnError, _furnitureContainer.gameObject);
         await UniTask.WaitWhile(() => _isWaiting);
         if (_goModel != null) {
             AddItem(product, _goModel);
@@ -258,7 +253,8 @@ public class Room : MonoBehaviour {
 
     private void FixDownloadedFromDima(GameObject downloaded) {
         FixMeshPivotToBottomCenter(downloaded.GetComponent<MeshFilter>());
-        downloaded.transform.localScale = Vector3.one * 0.001f;
+        downloaded.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", null);
+        //downloaded.transform.localScale = Vector3.one * 0.001f;
     }
 
     void FixMeshPivotToBottomCenter(MeshFilter mf) {
@@ -310,6 +306,5 @@ public class Room : MonoBehaviour {
 
     private void OnLoad(AssetLoaderContext context) {
         _goModel = context.RootGameObject;
-        _isWaiting = false;
     }
 }

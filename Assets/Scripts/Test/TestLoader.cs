@@ -66,5 +66,6 @@ public class TestLoader : MonoBehaviour
         // You can make the GameObject visible again at this step if you prefer to.
         var myLoadedGameObject = assetLoaderContext.RootGameObject;
         myLoadedGameObject.SetActive(true);
+        myLoadedGameObject.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", null);
     }
 }

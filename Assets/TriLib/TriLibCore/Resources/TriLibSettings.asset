@@ -16,4 +16,4 @@ MonoBehaviour:
   - StandardMaterialMapper
   - UniversalRPMaterialMapper
   - HDRPMaterialMapper
-  _boolValues: 010000
+  _boolValues: 000100
